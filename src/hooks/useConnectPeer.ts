@@ -8,18 +8,20 @@ import {
 import { usePeerStore } from '../lib/peer-store';
 import { useGameStore } from '../lib/game-store';
 import { getFromLocalStorage, saveToLocalStorage } from '../lib/local-storage';
-import { localStorageStateKey } from '../constants';
+import { LOCAL_STORAGE_STATE_KEY } from '../constants';
 
 const useConnectPeer = (roomId?: string | null) => {
   const addConnection = usePeerStore((state) => state.addConnection);
   const removeConnection = usePeerStore((state) => state.removeConnection);
-  const setGameData = useGameStore((state) => state.setGameData);
   const setPlayerConnected = useGameStore((state) => state.setPlayerConnected);
+  const setPhase = useGameStore((state) => state.setPhase);
+  const setCards = useGameStore((state) => state.setCards);
+
   const peerRef = useRef<Peer>(undefined);
 
   useEffect(() => {
     return () => {
-      const { playerId } = getFromLocalStorage(localStorageStateKey);
+      const { playerId } = getFromLocalStorage(LOCAL_STORAGE_STATE_KEY);
       peerRef.current?.destroy();
       removeConnection(playerId);
       setPlayerConnected(playerId, false);
@@ -31,11 +33,11 @@ const useConnectPeer = (roomId?: string | null) => {
       if (!roomId) return;
 
       const playerId =
-        getFromLocalStorage(localStorageStateKey)?.playerId ||
+        getFromLocalStorage(LOCAL_STORAGE_STATE_KEY)?.playerId ||
         crypto.randomUUID();
 
       saveToLocalStorage({
-        name: localStorageStateKey,
+        name: LOCAL_STORAGE_STATE_KEY,
         value: { playerId, roomId },
       });
 
@@ -78,16 +80,9 @@ const useConnectPeer = (roomId?: string | null) => {
   const handleEvent = useEffectEvent((event: GameEvent) => {
     switch (event.type) {
       case 'GAME_STATE_SYNC':
-        setGameData({
-          playersData: new Map(
-            event.playersData.map((item) => [
-              item[0],
-              { ...item[1], isConnected: true },
-            ]),
-          ),
-          phase: event.phase,
-          round: event.round,
-        });
+        console.log({ event });
+        setPhase(event.phase);
+        if (event.cards) setCards(event.cards);
         break;
       default:
         break;

@@ -1,13 +1,15 @@
 import { createSearchParams, Navigate, useSearchParams } from 'react-router';
-import { usePeerStore } from '../../lib/peer-store';
-import type { PlayerReadyEvent } from '../../schemas/events';
+import { LOCAL_STORAGE_STATE_KEY } from '../../constants';
+import { useGameStore } from '../../lib/game-store';
 import { getFromLocalStorage } from '../../lib/local-storage';
-import { localStorageStateKey } from '../../constants';
+import { usePeerStore } from '../../lib/peer-store';
+import DealPhase from './DealPhase';
 
 const Play = () => {
-  const { playerId } = getFromLocalStorage(localStorageStateKey);
+  const { playerId } = getFromLocalStorage(LOCAL_STORAGE_STATE_KEY);
   const [params] = useSearchParams();
   const connection = usePeerStore((state) => state.connections.get(playerId));
+  const phase = useGameStore((state) => state.phase);
 
   if (!connection || !playerId) {
     return (
@@ -20,14 +22,13 @@ const Play = () => {
     );
   }
 
-  const setPlayerReady = () => {
-    connection.send({
-      type: 'PLAYER_READY',
-      playerId,
-    } satisfies PlayerReadyEvent);
-  };
+  switch (phase) {
+    case 'CARD_DEAL':
+      return <DealPhase />;
 
-  return <button onClick={setPlayerReady}>I'm ready!</button>;
+    default:
+      break;
+  }
 };
 
 export default Play;

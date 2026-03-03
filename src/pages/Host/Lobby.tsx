@@ -1,6 +1,6 @@
 import QRCode from 'react-qr-code';
 import { useOutletContext } from 'react-router';
-import useStartGame from '../../hooks/useStartGame';
+import useGameOrcestrator from '../../hooks/useGameOrchestrator';
 import { useLobbyStore } from '../../lib/lobby-store';
 import type { HostOutletContextType } from '../../types';
 
@@ -8,7 +8,7 @@ const Lobby = () => {
   const { roomId } = useOutletContext<HostOutletContextType>();
 
   const players = useLobbyStore((state) => state.players);
-  const startGame = useStartGame();
+  const { startGame } = useGameOrcestrator();
 
   if (!roomId) return 'loading...';
 

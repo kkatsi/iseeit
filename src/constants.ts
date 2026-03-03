@@ -8,4 +8,5 @@ export const cardIds = [
   'card7',
 ];
 
-export const localStorageStateKey = 'iseeitState';
+export const LOCAL_STORAGE_STATE_KEY = 'iseeitState';
+export const SCORE_THRESHOLD = 40;

@@ -1,12 +1,14 @@
 import type { Player } from '../schemas/player';
 import { cardIds } from '../constants';
+import type { PlayersDataMap } from './game-store';
 
 const CARD_BASE_URL = import.meta.env.VITE_CARD_BASE_URL;
 
 export const dealCards = (
-  playerIds: Player['id'][],
+  playersData: PlayersDataMap,
   cardsPerPlayer: number = 1,
 ): Map<Player['id'], string[]> => {
+  const playerIds = [...playersData.keys()];
   const totalCardsNeeded = playerIds.length * cardsPerPlayer;
 
   if (totalCardsNeeded > cardIds.length) {

@@ -1,4 +1,4 @@
-import { useActionState, useEffect, useEffectEvent } from 'react';
+import { useActionState } from 'react';
 import {
   createSearchParams,
   useNavigate,
@@ -6,11 +6,6 @@ import {
   useSearchParams,
 } from 'react-router';
 import type { RoomOutletContextType } from '../../types';
-import {
-  getFromLocalStorage,
-  removeFromLocalStorage,
-} from '../../lib/local-storage';
-import { localStorageStateKey } from '../../constants';
 
 const Connect = () => {
   const navigate = useNavigate();
@@ -18,17 +13,17 @@ const Connect = () => {
 
   const { connect } = useOutletContext<RoomOutletContextType>();
 
-  useEffect(() => {
-    (async () => {
-      const { playerId, roomId: savedRoomId } =
-        getFromLocalStorage(localStorageStateKey);
-      const currentRoomId = params.get('roomId');
-      if (playerId && savedRoomId === currentRoomId) await connectToPeer('');
-      else removeFromLocalStorage(localStorageStateKey);
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     const { playerId, roomId: savedRoomId } =
+  //       getFromLocalStorage(localStorageStateKey);
+  //     const currentRoomId = params.get('roomId');
+  //     if (playerId && savedRoomId === currentRoomId) await connectToPeer('');
+  //     else removeFromLocalStorage(localStorageStateKey);
+  //   })();
+  // }, []);
 
-  const connectToPeer = useEffectEvent(async (name: string) => {
+  const connectToPeer = async (name: string) => {
     try {
       await connect(name);
       navigate({
@@ -38,7 +33,7 @@ const Connect = () => {
     } catch (error) {
       alert(error);
     }
-  });
+  };
 
   const submitAction = async (
     _prevState: string | null,
