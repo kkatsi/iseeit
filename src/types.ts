@@ -1,5 +1,7 @@
-export interface Player {
-  name: string;
-  id: string;
-  points: number;
-}
+export type RoomOutletContextType = {
+  connect: (name: string) => Promise<void>;
+};
+
+export type HostOutletContextType = {
+  roomId: string;
+};

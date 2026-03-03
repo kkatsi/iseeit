@@ -1,20 +1,42 @@
-import QRCode from 'react-qr-code';
-import useOpenNewPeer from './hooks/useOpenNewPeer';
 import { Route, Routes } from 'react-router';
+import Connect from './pages/Room/Connect';
+import RoomGame from './pages/Room/Game';
+
 import Home from './pages/Home';
-import Connect from './pages/Connect';
+import RoomLayout from './layouts/RoomLayout';
+import Game from './pages/HostGame';
+import HostLayout from './layouts/HostLayout';
 
 function App() {
   return (
     <Routes>
       <Route
-        index
-        element={<Home />}
-      />
+        path="/"
+        element={<HostLayout />}
+      >
+        <Route
+          index
+          element={<Home />}
+        />
+        <Route
+          path="/host-game"
+          element={<Game />}
+        />
+      </Route>
+
       <Route
-        path="/connect"
-        element={<Connect />}
-      />
+        path="/room"
+        element={<RoomLayout />}
+      >
+        <Route
+          path="connect"
+          element={<Connect />}
+        />
+        <Route
+          path="game"
+          element={<RoomGame />}
+        />
+      </Route>
     </Routes>
   );
 }
