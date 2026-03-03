@@ -1,11 +1,10 @@
 import { Route, Routes } from 'react-router';
-import Connect from './pages/Room/Connect';
-import RoomGame from './pages/Room/Game';
-
-import Home from './pages/Home';
-import RoomLayout from './layouts/RoomLayout';
-import Game from './pages/HostGame';
+import Connect from './pages/Client/Connect';
+import ClientPlay from './pages/Client/Play';
+import Lobby from './pages/Host/Lobby';
+import Game from './pages/Host/Game';
 import HostLayout from './layouts/HostLayout';
+import ClientLayout from './layouts/ClientLayout';
 
 function App() {
   return (
@@ -16,25 +15,25 @@ function App() {
       >
         <Route
           index
-          element={<Home />}
+          element={<Lobby />}
         />
         <Route
-          path="/host-game"
+          path="/game"
           element={<Game />}
         />
       </Route>
 
       <Route
-        path="/room"
-        element={<RoomLayout />}
+        path="/client"
+        element={<ClientLayout />}
       >
         <Route
           path="connect"
           element={<Connect />}
         />
         <Route
-          path="game"
-          element={<RoomGame />}
+          path="play"
+          element={<ClientPlay />}
         />
       </Route>
     </Routes>

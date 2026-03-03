@@ -26,7 +26,7 @@ const useStartGame = () => {
 
     setGameData({ playersData, round: 1, phase: 'CARD_DEAL' });
 
-    navigate('/host-game');
+    navigate('/game');
   };
 
   return startGame;

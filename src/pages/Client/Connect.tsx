@@ -32,7 +32,7 @@ const Connect = () => {
     try {
       await connect(name);
       navigate({
-        pathname: '../game',
+        pathname: '../play',
         search: createSearchParams(params).toString(),
       });
     } catch (error) {

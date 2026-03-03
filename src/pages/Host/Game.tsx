@@ -1,7 +1,7 @@
-import useHostGame from '../hooks/useHostGame';
-import { useGameStore } from '../lib/game-store';
+import useHostGame from '../../hooks/useHostGame';
+import { useGameStore } from '../../lib/game-store';
 
-const HostGame = () => {
+const Game = () => {
   const playersData = useGameStore((state) => state.playersData);
   const { hasDealInProgress } = useHostGame();
 
@@ -30,4 +30,4 @@ const HostGame = () => {
   );
 };
 
-export default HostGame;
+export default Game;

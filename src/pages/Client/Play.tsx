@@ -4,7 +4,7 @@ import type { PlayerReadyEvent } from '../../schemas/events';
 import { getFromLocalStorage } from '../../lib/local-storage';
 import { localStorageStateKey } from '../../constants';
 
-const Game = () => {
+const Play = () => {
   const { playerId } = getFromLocalStorage(localStorageStateKey);
   const [params] = useSearchParams();
   const connection = usePeerStore((state) => state.connections.get(playerId));
@@ -30,4 +30,4 @@ const Game = () => {
   return <button onClick={setPlayerReady}>I'm ready!</button>;
 };
 
-export default Game;
+export default Play;
