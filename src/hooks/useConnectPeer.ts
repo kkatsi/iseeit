@@ -16,6 +16,10 @@ const useConnectPeer = (roomId?: string | null) => {
   const setPlayerConnected = useGameStore((state) => state.setPlayerConnected);
   const setPhase = useGameStore((state) => state.setPhase);
   const setCards = useGameStore((state) => state.setCards);
+  const setRound = useGameStore((state) => state.setRound);
+  const setConnectedPlayerId = useGameStore(
+    (state) => state.setConnectedPlayerId,
+  );
 
   const peerRef = useRef<Peer>(undefined);
 
@@ -80,9 +84,13 @@ const useConnectPeer = (roomId?: string | null) => {
   const handleEvent = useEffectEvent((event: GameEvent) => {
     switch (event.type) {
       case 'GAME_STATE_SYNC':
-        console.log({ event });
+        const cardsMap = new Map();
+        cardsMap.set(event.playerId, event.cards);
+
         setPhase(event.phase);
-        if (event.cards) setCards(event.cards);
+        setRound({ storytellerId: event.storytellerId });
+        setCards(cardsMap);
+        setConnectedPlayerId(event.playerId);
         break;
       default:
         break;

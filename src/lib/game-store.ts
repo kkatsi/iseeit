@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import type { Player } from '../schemas/player';
 import { SCORE_THRESHOLD } from '../constants';
+import type { Player } from '../schemas/player';
 
 export type PlayerData = {
   score: number;
@@ -21,6 +21,7 @@ export type GamePhase =
   | 'GAME_END';
 
 type RoundState = {
+  number: number;
   storytellerId: string;
   clue?: string;
   storytellerCard?: string;
@@ -36,11 +37,13 @@ type GameStore = {
   phase?: GamePhase;
   order: string[]; //playerId in order;
   scoreThreshhold: number;
-  cards?: string[];
+  cards: Map<string, string[]>;
+  connectedPlayerId: string;
+  setConnectedPlayerId: (playerId: string) => void;
   setPhase: (phase: GamePhase) => void;
-  setRound: (round: RoundState) => void;
+  setRound: (round: Partial<RoundState>) => void;
   setOrder: (order: string[]) => void;
-  setCards: (cards: string[]) => void;
+  setCards: (cards: Map<string, string[]>) => void;
   setPlayersData: (playersData: PlayersDataMap) => void;
   setPlayerReady: (playerId: Player['id'], isReady: boolean) => void;
   setPlayerConnected: (playerId: Player['id'], isConnected: boolean) => void;
@@ -50,16 +53,21 @@ export const useGameStore = create<GameStore>()(
   devtools(
     (set) => ({
       scoreThreshhold: SCORE_THRESHOLD,
+      connectedPlayerId: '',
       playersData: new Map(),
       setPlayersData: (playersData: PlayersDataMap) =>
         set(() => {
           return { playersData };
         }),
-      setRound: (round: RoundState) =>
+      setRound: (round: Partial<RoundState>) =>
         set((state) => ({ round: { ...state.round, ...round } })),
       setPhase: (phase: GamePhase) => set(() => ({ phase })),
-      setCards: (cards: string[]) => set(() => ({ cards })),
+      setCards: (cards: Map<string, string[]>) => set(() => ({ cards })),
       setOrder: (order: string[]) => set(() => ({ order })),
+      setConnectedPlayerId: (playerId: string) =>
+        set(() => ({
+          connectedPlayerId: playerId,
+        })),
       setPlayerReady: (playerId: Player['id'], isReady: boolean) =>
         set((state) => {
           const newPlayersData = new Map(state.playersData);

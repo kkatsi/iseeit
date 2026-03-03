@@ -1,5 +1,6 @@
 import useGameOrcestrator from '../../hooks/useGameOrchestrator';
 import DealPhase from './DealPhase';
+import StorytellerPhase from './StorytellerPhase';
 
 const Game = () => {
   const { phase } = useGameOrcestrator();
@@ -8,7 +9,7 @@ const Game = () => {
     case 'CARD_DEAL':
       return <DealPhase />;
     case 'STORYTELLER_CLUE':
-      return 'story teller clue';
+      return <StorytellerPhase />;
     default:
       return 'nothing';
   }

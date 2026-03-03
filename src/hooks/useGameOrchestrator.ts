@@ -1,15 +1,13 @@
-import { useRef } from 'react';
 import { useNavigate } from 'react-router';
 import { dealCards } from '../lib/card-deal';
-import {
-  useGameStore,
-  type GamePhase,
-  type PlayersDataMap,
-} from '../lib/game-store';
+import { useGameStore, type PlayersDataMap } from '../lib/game-store';
 import type { GameEvent } from '../schemas/events';
 import type { Player } from '../schemas/player';
-import { areAllPlayersReady, calculatePlayingOrder } from '../utils/game-logic';
-import { createIterator } from '../utils/iterator';
+import {
+  areAllPlayersReady,
+  calculatePlayingOrder,
+  getStoryteller,
+} from '../utils/game-logic';
 import useSyncGameState from './useSyncGameState';
 
 const useGameOrcestrator = () => {
@@ -20,14 +18,9 @@ const useGameOrcestrator = () => {
   const setRound = useGameStore((state) => state.setRound);
   const setPhase = useGameStore((state) => state.setPhase);
   const setPlayingOrder = useGameStore((state) => state.setOrder);
+  const setCards = useGameStore((state) => state.setCards);
 
   const syncGameState = useSyncGameState();
-
-  const iterPhases =
-    useRef<ReturnType<typeof createIterator<GamePhase>>>(undefined);
-
-  const iterOrder =
-    useRef<ReturnType<typeof createIterator<string>>>(undefined);
 
   const startGame = (players: Map<Player['id'], Player>) => {
     const playersData = new Map(
@@ -46,26 +39,24 @@ const useGameOrcestrator = () => {
 
     const playingOrder = calculatePlayingOrder(playersData);
 
-    iterOrder.current = createIterator(playingOrder);
-    iterPhases.current = createIterator([
-      'CARD_DEAL',
-      'STORYTELLER_CLUE',
-      'PLAYERS_SELECT_CARD',
-      'VOTING',
-      'ROUND_RESULTS',
-    ]);
-
-    const firstStoryTellerId = iterOrder.current.next().value as string;
-
     setPlayingOrder(playingOrder);
     setPhase('CARD_DEAL');
-    setRound({ storytellerId: firstStoryTellerId });
+    setRound({
+      number: 1,
+      storytellerId: getStoryteller(playingOrder, 1),
+    });
 
     const cards = dealCards(playersData);
+    const playerCards: Map<string, string[]> = new Map();
 
     for (const [playerId] of playersData) {
-      const playerCards = cards.get(playerId);
-      syncGameState(playerId, playerCards);
+      playerCards.set(playerId, cards.get(playerId) || []);
+    }
+
+    setCards(playerCards);
+
+    for (const [playerId] of playersData) {
+      syncGameState(playerId);
     }
 
     navigate('/game');
@@ -88,10 +79,10 @@ const useGameOrcestrator = () => {
           currentPhase === 'CARD_DEAL' &&
           areAllPlayersReady(currentPlayersData)
         ) {
-          const nextPhase = iterPhases.current?.next().value;
-          console.log('mode to next phase', nextPhase);
-
-          setPhase(nextPhase || 'STORYTELLER_CLUE');
+          setPhase('STORYTELLER_CLUE');
+          for (const [playerId] of currentPlayersData) {
+            syncGameState(playerId);
+          }
         }
         break;
       default:
@@ -100,17 +91,25 @@ const useGameOrcestrator = () => {
   };
 
   const advanceToNextRound = () => {
-    const nextStoryTeller = iterOrder.current?.next();
+    const { order, round, playersData, scoreThreshhold } =
+      useGameStore.getState();
 
-    if (nextStoryTeller?.done) {
-      iterOrder.current?.reset();
+    const hasWinner = [...playersData.values()].some(
+      (p) => p.score >= scoreThreshhold,
+    );
+
+    if (hasWinner) {
+      setPhase('GAME_END');
+      return;
     }
 
-    iterPhases.current?.reset();
-    const nextPhase = iterPhases.current?.next().value;
+    const nextRoundNumber = round.number + 1;
 
-    setPhase(nextPhase || 'GAME_END');
-    setRound({ storytellerId: nextStoryTeller?.value as string });
+    setPhase('CARD_DEAL');
+    setRound({
+      number: nextRoundNumber,
+      storytellerId: getStoryteller(order, nextRoundNumber),
+    });
   };
 
   return {

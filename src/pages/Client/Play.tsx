@@ -4,6 +4,7 @@ import { useGameStore } from '../../lib/game-store';
 import { getFromLocalStorage } from '../../lib/local-storage';
 import { usePeerStore } from '../../lib/peer-store';
 import DealPhase from './DealPhase';
+import StorytellerPhase from './StorytellerPhase';
 
 const Play = () => {
   const { playerId } = getFromLocalStorage(LOCAL_STORAGE_STATE_KEY);
@@ -25,7 +26,8 @@ const Play = () => {
   switch (phase) {
     case 'CARD_DEAL':
       return <DealPhase />;
-
+    case 'STORYTELLER_CLUE':
+      return <StorytellerPhase />;
     default:
       break;
   }

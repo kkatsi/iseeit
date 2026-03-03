@@ -1,17 +1,18 @@
 import { useEffect } from 'react';
 import { useGameStore } from '../../lib/game-store';
 import { usePeerStore } from '../../lib/peer-store';
-import { getFromLocalStorage } from '../../lib/local-storage';
-import { LOCAL_STORAGE_STATE_KEY } from '../../constants';
 import type { PlayerReadyEvent } from '../../schemas/events';
 
 const DealPhase = () => {
-  const { playerId } = getFromLocalStorage(LOCAL_STORAGE_STATE_KEY);
-
+  const playerId = useGameStore((state) => state.connectedPlayerId);
   const connection = usePeerStore((state) => state.connections.get(playerId));
-  const cards = useGameStore((state) => state.cards);
+  const cards = useGameStore((state) => state.cards).get(playerId);
 
   useEffect(() => {
+    console.log({ playerId, connection });
+
+    if (!playerId || !connection) return;
+
     const timeout = setTimeout(() => {
       connection?.send({
         type: 'PLAYER_READY',
@@ -22,7 +23,7 @@ const DealPhase = () => {
     return () => {
       clearTimeout(timeout);
     };
-  }, []);
+  }, [playerId, connection]);
 
   if (!cards) return 'waiting for cards...';
 
