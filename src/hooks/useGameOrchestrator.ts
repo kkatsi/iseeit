@@ -64,7 +64,7 @@ const useGameOrcestrator = () => {
 
   const handleGameEvent = (event: GameEvent) => {
     switch (event.type) {
-      case 'PLAYER_READY':
+      case 'PLAYER_READY': {
         setPlayerReady(event.playerId, true);
 
         const currentPlayersData = useGameStore.getState().playersData;
@@ -85,6 +85,7 @@ const useGameOrcestrator = () => {
           }
         }
         break;
+      }
       default:
         break;
     }

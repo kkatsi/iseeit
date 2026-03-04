@@ -12,11 +12,33 @@ const useOpenPeer = () => {
 
   const addPlayer = useLobbyStore((state) => state.addPlayer);
   const removePlayer = useLobbyStore((state) => state.removePlayer);
-  const setPlayerReady = useGameStore((state) => state.setPlayerReady);
   const setPlayerConnected = useGameStore((state) => state.setPlayerConnected);
   const addConnection = usePeerStore((state) => state.addConnection);
   const removeConnection = usePeerStore((state) => state.removeConnection);
   const { handleGameEvent } = useGameOrcestrator();
+
+  const handleEvent = useEffectEvent(
+    (event: GameEvent, connection: DataConnection) => {
+      switch (event.type) {
+        case 'JOINED':
+          //store peer connection;
+          addConnection(event.player.id, connection);
+
+          //handle connection close
+          connection.on('close', () => {
+            removePlayer(event.player.id);
+            removeConnection(event.player.id);
+            setPlayerConnected(event.player.id, false);
+          });
+
+          addPlayer(event.player);
+          break;
+        default:
+          handleGameEvent(event);
+          break;
+      }
+    },
+  );
 
   useEffect(() => {
     const peer = new Peer();
@@ -35,7 +57,6 @@ const useOpenPeer = () => {
         }
 
         handleEvent(result.data, conn);
-        handleGameEvent(result.data);
       });
     });
 
@@ -43,31 +64,6 @@ const useOpenPeer = () => {
       peer.destroy();
     };
   }, []);
-
-  const handleEvent = useEffectEvent(
-    (event: GameEvent, connection: DataConnection) => {
-      switch (event.type) {
-        case 'JOINED':
-          //store peer connection;
-          addConnection(event.player.id, connection);
-
-          //handle connection close
-          connection.on('close', () => {
-            removePlayer(event.player.id);
-            removeConnection(event.player.id);
-            setPlayerConnected(event.player.id, false);
-          });
-
-          addPlayer(event.player);
-          break;
-        case 'PLAYER_READY':
-          setPlayerReady(event.playerId, true);
-          break;
-        default:
-          break;
-      }
-    },
-  );
 
   return roomId;
 };

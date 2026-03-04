@@ -8,7 +8,8 @@ function isLocalStorageSupported() {
     localStorage.setItem('storage', 'supported');
     localStorage.removeItem('storage');
     return true;
-  } catch (e) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (_e: unknown) {
     return false;
   }
 }
