@@ -47,6 +47,11 @@ const votingEventSchema = z.object({
   playerId: z.uuidv4(),
 });
 
+const reconnectEventSchema = z.object({
+  type: z.literal('RECONNECT'),
+  playerId: z.uuidv4(),
+});
+
 export const gameEventSchema = z.discriminatedUnion('type', [
   joinedEventSchema,
   playerReadyEventSchema,
@@ -54,6 +59,7 @@ export const gameEventSchema = z.discriminatedUnion('type', [
   storyTellerClueEventSchema,
   playerSelectsCardEventSchema,
   votingEventSchema,
+  reconnectEventSchema,
 ]);
 
 export type GameEvent = z.infer<typeof gameEventSchema>;
@@ -66,3 +72,4 @@ export type PlayerSelectsCardEvent = z.infer<
   typeof playerSelectsCardEventSchema
 >;
 export type VotingEvent = z.infer<typeof votingEventSchema>;
+export type ReconnectEvent = z.infer<typeof reconnectEventSchema>;

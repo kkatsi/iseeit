@@ -1,27 +1,50 @@
-import { useActionState } from 'react';
+import { useActionState, useEffect, useEffectEvent, useState } from 'react';
 import {
   createSearchParams,
   useNavigate,
   useOutletContext,
   useSearchParams,
 } from 'react-router';
+import { LOCAL_STORAGE_STATE_KEY } from '../../constants';
+import {
+  getFromLocalStorage,
+  removeFromLocalStorage,
+} from '../../lib/local-storage';
 import type { RoomOutletContextType } from '../../types';
 
 const Connect = () => {
   const navigate = useNavigate();
   const [params] = useSearchParams();
 
-  const { connect } = useOutletContext<RoomOutletContextType>();
+  const { connect, reconnect } = useOutletContext<RoomOutletContextType>();
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const { playerId, roomId: savedRoomId } =
-  //       getFromLocalStorage(localStorageStateKey);
-  //     const currentRoomId = params.get('roomId');
-  //     if (playerId && savedRoomId === currentRoomId) await connectToPeer('');
-  //     else removeFromLocalStorage(localStorageStateKey);
-  //   })();
-  // }, []);
+  const reconnectEvent = useEffectEvent(reconnect);
+  const navigateEvent = useEffectEvent(() => {
+    navigate({
+      pathname: '../play',
+      search: createSearchParams(params).toString(),
+    });
+  });
+
+  const currentRoomId = params.get('roomId');
+
+  const [isReconnecting, setReconnecting] = useState<boolean>(false);
+
+  useEffect(() => {
+    const stored = getFromLocalStorage(LOCAL_STORAGE_STATE_KEY);
+
+    if (stored?.playerId && stored?.roomId === currentRoomId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setReconnecting(true);
+      reconnectEvent()
+        .then(() => {
+          navigateEvent();
+        })
+        .catch(() => {
+          removeFromLocalStorage(LOCAL_STORAGE_STATE_KEY);
+        });
+    }
+  }, [currentRoomId]);
 
   const connectToPeer = async (name: string) => {
     try {
@@ -48,6 +71,8 @@ const Connect = () => {
   };
 
   const [error, formAction, isPending] = useActionState(submitAction, null);
+
+  if (isReconnecting) return 'Trying to reconnect...';
 
   return (
     <form action={formAction}>

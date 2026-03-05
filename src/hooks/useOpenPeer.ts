@@ -5,6 +5,7 @@ import { useGameStore } from '../lib/game-store';
 import { useLobbyStore } from '../lib/lobby-store';
 import { usePeerStore } from '../lib/peer-store';
 import { gameEventSchema, type GameEvent } from '../schemas/events';
+import { syncGameState } from '../utils/game-logic';
 import useGameOrcestrator from './useGameOrchestrator';
 
 const useOpenPeer = () => {
@@ -21,18 +22,32 @@ const useOpenPeer = () => {
     (event: GameEvent, connection: DataConnection) => {
       switch (event.type) {
         case 'JOINED':
-          //store peer connection;
           addConnection(event.player.id, connection);
 
-          //handle connection close
           connection.on('close', () => {
-            removePlayer(event.player.id);
+            const phase = useGameStore.getState().phase;
+            if (!phase) removePlayer(event.player.id);
             removeConnection(event.player.id);
             setPlayerConnected(event.player.id, false);
           });
 
           addPlayer(event.player);
           break;
+        case 'RECONNECT': {
+          const playersData = useGameStore.getState().playersData;
+          if (!playersData.has(event.playerId)) return;
+
+          addConnection(event.playerId, connection);
+
+          connection.on('close', () => {
+            removeConnection(event.playerId);
+            setPlayerConnected(event.playerId, false);
+          });
+
+          setPlayerConnected(event.playerId, true);
+          syncGameState(event.playerId);
+          break;
+        }
         default:
           handleGameEvent(event);
           break;

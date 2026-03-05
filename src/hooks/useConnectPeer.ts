@@ -8,6 +8,7 @@ import {
   gameEventSchema,
   type GameEvent,
   type JoinedEvent,
+  type ReconnectEvent,
 } from '../schemas/events';
 
 const useConnectPeer = (roomId?: string | null) => {
@@ -103,7 +104,43 @@ const useConnectPeer = (roomId?: string | null) => {
     });
   };
 
-  return connect;
+  const reconnect = async () => {
+    const stored = getFromLocalStorage(LOCAL_STORAGE_STATE_KEY);
+    if (!stored?.playerId || !roomId) return;
+
+    const { playerId } = stored;
+    const peer = new Peer();
+    peerRef.current = peer;
+
+    await new Promise((res, rej) => {
+      peer.on('open', () => {
+        const connection = peer.connect(roomId);
+        addConnection(playerId, connection);
+
+        connection.on('open', () => {
+          connection.send({
+            type: 'RECONNECT',
+            playerId,
+          } satisfies ReconnectEvent);
+
+          connection.on('data', (data) => {
+            const result = gameEventSchema.safeParse(data);
+            if (!result.success) {
+              console.warn('Invalid event:', result.error);
+              return;
+            }
+            handleEvent(result.data);
+          });
+
+          res(undefined);
+        });
+      });
+
+      peer.on('error', (error) => rej(error));
+    });
+  };
+
+  return { connect, reconnect };
 };
 
 export default useConnectPeer;
