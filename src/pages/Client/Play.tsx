@@ -5,6 +5,9 @@ import { getFromLocalStorage } from '../../lib/local-storage';
 import { usePeerStore } from '../../lib/peer-store';
 import DealPhase from './DealPhase';
 import StorytellerPhase from './StorytellerPhase';
+import PlayersSelectCardPhase from './PlayersSelectCardPhase';
+import VotingPhase from './VotingPhase';
+import ResultsPhase from './ResultsPhase';
 
 const Play = () => {
   const { playerId } = getFromLocalStorage(LOCAL_STORAGE_STATE_KEY);
@@ -28,6 +31,12 @@ const Play = () => {
       return <DealPhase />;
     case 'STORYTELLER_CLUE':
       return <StorytellerPhase />;
+    case 'PLAYERS_SELECT_CARD':
+      return <PlayersSelectCardPhase />;
+    case 'VOTING':
+      return <VotingPhase />;
+    case 'ROUND_RESULTS':
+      return <ResultsPhase />;
     default:
       break;
   }

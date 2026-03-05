@@ -6,9 +6,11 @@ import type { Player } from '../schemas/player';
 import {
   areAllPlayersReady,
   calculatePlayingOrder,
+  calculateScores,
   getStoryteller,
+  syncGameState,
 } from '../utils/game-logic';
-import useSyncGameState from './useSyncGameState';
+import { shuffleItems } from '../utils/shuffle';
 
 const useGameOrcestrator = () => {
   const phase = useGameStore((state) => state.phase);
@@ -19,8 +21,8 @@ const useGameOrcestrator = () => {
   const setPhase = useGameStore((state) => state.setPhase);
   const setPlayingOrder = useGameStore((state) => state.setOrder);
   const setCards = useGameStore((state) => state.setCards);
-
-  const syncGameState = useSyncGameState();
+  const resetRoundData = useGameStore((state) => state.resetRoundData);
+  const resetPlayersReady = useGameStore((state) => state.resetPlayersReady);
 
   const startGame = (players: Map<Player['id'], Player>) => {
     const playersData = new Map(
@@ -70,8 +72,6 @@ const useGameOrcestrator = () => {
         const currentPlayersData = useGameStore.getState().playersData;
         const currentPhase = useGameStore.getState().phase;
 
-        console.log([...currentPlayersData.entries()]);
-
         // check if we are at deal phase
         // then check if all players are ready
         // move to the next phase
@@ -80,6 +80,81 @@ const useGameOrcestrator = () => {
           areAllPlayersReady(currentPlayersData)
         ) {
           setPhase('STORYTELLER_CLUE');
+          for (const [playerId] of currentPlayersData) {
+            syncGameState(playerId);
+          }
+        }
+        break;
+      }
+      case 'STORYTELLER_CLUE': {
+        const currentPlayersData = useGameStore.getState().playersData;
+
+        setRound({
+          clue: event.clue,
+          storytellerCard: event.card,
+        });
+        setPhase('PLAYERS_SELECT_CARD');
+        for (const [playerId] of currentPlayersData) {
+          syncGameState(playerId);
+        }
+        break;
+      }
+      case 'PLAYER_SELECTS_CARD': {
+        const currentPlayersData = useGameStore.getState().playersData;
+        const storytellerCard = useGameStore.getState().round.storytellerCard;
+        const submittedCards = new Map(
+          useGameStore.getState().round.submittedCards,
+        );
+        submittedCards?.set(event.playerId, event.card);
+        setRound({ submittedCards });
+
+        if (
+          submittedCards?.size === currentPlayersData.size - 1 &&
+          storytellerCard
+        ) {
+          console.log('all players submitted');
+
+          setPhase('VOTING');
+          const shuffledCards = shuffleItems([
+            ...submittedCards.values(),
+            storytellerCard,
+          ]);
+          console.log({ shuffledCards });
+
+          setRound({ tableCards: shuffledCards });
+
+          for (const [playerId] of currentPlayersData) {
+            syncGameState(playerId);
+          }
+        }
+        break;
+      }
+      case 'VOTING': {
+        const currentPlayersData = useGameStore.getState().playersData;
+        const votes = new Map(useGameStore.getState().round.votes);
+
+        const { storytellerCard, storytellerId, submittedCards } =
+          useGameStore.getState().round;
+
+        votes.set(event.playerId, event.card);
+
+        setRound({ votes });
+
+        if (
+          votes?.size === currentPlayersData.size - 1 &&
+          storytellerCard &&
+          submittedCards
+        ) {
+          setRound({
+            roundScores: calculateScores({
+              storytellerCard,
+              storytellerId,
+              submittedCards,
+              votes,
+            }),
+          });
+          setPhase('ROUND_RESULTS');
+
           for (const [playerId] of currentPlayersData) {
             syncGameState(playerId);
           }
@@ -104,6 +179,9 @@ const useGameOrcestrator = () => {
       return;
     }
 
+    resetRoundData();
+    resetPlayersReady();
+
     const nextRoundNumber = round.number + 1;
 
     setPhase('CARD_DEAL');
@@ -111,6 +189,12 @@ const useGameOrcestrator = () => {
       number: nextRoundNumber,
       storytellerId: getStoryteller(order, nextRoundNumber),
     });
+
+    const currentPlayersData = useGameStore.getState().playersData;
+
+    for (const [playerId] of currentPlayersData) {
+      syncGameState(playerId);
+    }
   };
 
   return {

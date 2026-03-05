@@ -39,6 +39,8 @@ type GameStore = {
   scoreThreshhold: number;
   cards: Map<string, string[]>;
   connectedPlayerId: string;
+  resetRoundData: () => void;
+  resetPlayersReady: () => void;
   setConnectedPlayerId: (playerId: string) => void;
   setPhase: (phase: GamePhase) => void;
   setRound: (round: Partial<RoundState>) => void;
@@ -55,6 +57,26 @@ export const useGameStore = create<GameStore>()(
       scoreThreshhold: SCORE_THRESHOLD,
       connectedPlayerId: '',
       playersData: new Map(),
+      resetPlayersReady: () =>
+        set((state) => {
+          const newPlayersData = new Map(state.playersData);
+          for (const [playerId, playerData] of newPlayersData) {
+            newPlayersData.set(playerId, { ...playerData, isReady: false });
+          }
+
+          return {
+            playersData: newPlayersData,
+          };
+        }),
+      resetRoundData: () =>
+        set((state) => {
+          return {
+            round: {
+              number: state.round.number,
+              storytellerId: state.round.storytellerId,
+            },
+          };
+        }),
       setPlayersData: (playersData: PlayersDataMap) =>
         set(() => {
           return { playersData };

@@ -38,8 +38,16 @@ const useConnectPeer = (roomId?: string | null) => {
         const cardsMap = new Map();
         cardsMap.set(event.playerId, event.cards);
 
+        const roundScores = new Map();
+        roundScores.set(event.playerId, event.roundScore);
+
         setPhase(event.phase);
-        setRound({ storytellerId: event.storytellerId });
+        setRound({
+          storytellerId: event.storytellerId,
+          clue: event.clue,
+          tableCards: event.tableCards,
+          roundScores,
+        });
         setCards(cardsMap);
         setConnectedPlayerId(event.playerId);
         break;

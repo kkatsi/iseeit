@@ -11,11 +11,20 @@ const playerReadyEventSchema = z.object({
   playerId: z.uuidv4(),
 });
 
+const playerSelectsCardEventSchema = z.object({
+  type: z.literal('PLAYER_SELECTS_CARD'),
+  card: z.string(),
+  playerId: z.uuidv4(),
+});
+
 const gameStateSyncSchema = z.object({
   playerId: z.uuidv4(),
   type: z.literal('GAME_STATE_SYNC'),
   cards: z.array(z.string()),
   storytellerId: z.uuidv4(),
+  clue: z.string().optional(),
+  tableCards: z.array(z.string()).optional(),
+  roundScore: z.number(),
   phase: z.enum([
     'CARD_DEAL',
     'STORYTELLER_CLUE',
@@ -32,11 +41,19 @@ const storyTellerClueEventSchema = z.object({
   card: z.string(),
 });
 
+const votingEventSchema = z.object({
+  type: z.literal('VOTING'),
+  card: z.string(),
+  playerId: z.uuidv4(),
+});
+
 export const gameEventSchema = z.discriminatedUnion('type', [
   joinedEventSchema,
   playerReadyEventSchema,
   gameStateSyncSchema,
   storyTellerClueEventSchema,
+  playerSelectsCardEventSchema,
+  votingEventSchema,
 ]);
 
 export type GameEvent = z.infer<typeof gameEventSchema>;
@@ -45,3 +62,7 @@ export type JoinedEvent = z.infer<typeof joinedEventSchema>;
 export type PlayerReadyEvent = z.infer<typeof playerReadyEventSchema>;
 export type GameStateSyncEvent = z.infer<typeof gameStateSyncSchema>;
 export type StoryTellerClueEvent = z.infer<typeof storyTellerClueEventSchema>;
+export type PlayerSelectsCardEvent = z.infer<
+  typeof playerSelectsCardEventSchema
+>;
+export type VotingEvent = z.infer<typeof votingEventSchema>;
