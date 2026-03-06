@@ -1,50 +1,69 @@
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@import "tailwindcss";
+
+/* Fairytale Handcrafted Theme */
+:root {
+  --background: #f5f0e6;
+  /* Warm aged parchment */
+  --foreground: #2d2a26;
+  /* Deep charcoal ink */
+  --card: #faf7f0;
+  /* Cream card */
+  --card-foreground: #2d2a26;
+  --primary: #3d5a47;
+  /* Forest green */
+  --primary-foreground: #faf7f0;
+  --secondary: #e8e4d9;
+  /* Soft sage */
+  --secondary-foreground: #2d2a26;
+  --muted: #e0dcd1;
+  /* Dusty parchment */
+  --muted-foreground: #6b6560;
+  --accent: #c4937a;
+  /* Warm terracotta */
+  --accent-foreground: #2d2a26;
+  --destructive: #a65d4e;
+  /* Burnt sienna */
+  --destructive-foreground: #faf7f0;
+  --border: #d4cfc4;
+  /* Soft sepia */
+  --input: #e8e4d9;
+  --ring: #3d5a47;
+  --radius: 0.5rem;
 }
 
-html,
-body,
-#root {
-  min-height: 100dvh;
-  width: 100%;
+@theme inline {
+  --font-serif: 'Crimson Text', Georgia, serif;
+  --font-handwritten: 'Caveat', cursive;
+  --font-sans: 'Crimson Text', Georgia, serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-body {
-  font-family: 'Georgia', 'Times New Roman', serif;
-  color: #3b2f2f;
-  background:
-    /* Charcoal grain texture overlay */
-    repeating-conic-gradient(
-        rgba(60, 50, 45, 0.03) 0% 25%,
-        transparent 0% 50%
-      )
-      0 0 / 4px 4px,
-    /* Subtle fibrous streaks */
-    repeating-linear-gradient(
-      120deg,
-      transparent,
-      transparent 40px,
-      rgba(80, 65, 55, 0.04) 40px,
-      rgba(80, 65, 55, 0.04) 41px
-    ),
-    repeating-linear-gradient(
-      60deg,
-      transparent,
-      transparent 55px,
-      rgba(90, 75, 60, 0.03) 55px,
-      rgba(90, 75, 60, 0.03) 56px
-    ),
-    /* Paper-like warm gradient base */
-    radial-gradient(
-      ellipse at 30% 20%,
-      #f5ebe0 0%,
-      #ede0d4 40%,
-      #ddd0c2 70%,
-      #d4c4b0 100%
-    );
-  background-attachment: fixed;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
 }

@@ -31,7 +31,7 @@ const useOpenPeer = () => {
             setPlayerConnected(event.player.id, false);
           });
 
-          addPlayer(event.player);
+          addPlayer(event.player, connection.connectionId);
           break;
         case 'RECONNECT': {
           const playersData = useGameStore.getState().playersData;
@@ -55,6 +55,8 @@ const useOpenPeer = () => {
     },
   );
 
+  const removePlayerEvent = useEffectEvent(removePlayer);
+
   useEffect(() => {
     const peer = new Peer();
 
@@ -72,6 +74,23 @@ const useOpenPeer = () => {
         }
 
         handleEvent(result.data, conn);
+      });
+
+      conn.on('close', () => {
+        const lobbyPlayers = useLobbyStore.getState().players;
+
+        console.log('open peer');
+        console.log({ lobbyPlayers });
+
+        const connections = [...lobbyPlayers.values()].map((playerData) => ({
+          connectionId: playerData.connectionId,
+          playerId: playerData.id,
+        }));
+        const currentPlayerId = connections.find(
+          (c) => c.connectionId === conn.connectionId,
+        )?.playerId;
+        console.log({ currentPlayerId });
+        if (currentPlayerId) removePlayerEvent(currentPlayerId);
       });
     });
 
