@@ -38,6 +38,8 @@ type GameStore = {
   order: string[]; //playerId in order;
   scoreThreshhold: number;
   cards: Map<string, string[]>;
+  drawPile: string[];
+  discardPile: string[];
   connectedPlayerId: string;
   resetRoundData: () => void;
   resetPlayersReady: () => void;
@@ -46,6 +48,8 @@ type GameStore = {
   setRound: (round: Partial<RoundState>) => void;
   setOrder: (order: string[]) => void;
   setCards: (cards: Map<string, string[]>) => void;
+  setDrawPile: (drawPile: string[]) => void;
+  setDiscardPile: (discardPile: string[]) => void;
   setPlayersData: (playersData: PlayersDataMap) => void;
   setPlayerReady: (playerId: Player['id'], isReady: boolean) => void;
   setPlayerConnected: (playerId: Player['id'], isConnected: boolean) => void;
@@ -84,7 +88,11 @@ export const useGameStore = create<GameStore>()(
       setRound: (round: Partial<RoundState>) =>
         set((state) => ({ round: { ...state.round, ...round } })),
       setPhase: (phase: GamePhase) => set(() => ({ phase })),
+      drawPile: [],
+      discardPile: [],
       setCards: (cards: Map<string, string[]>) => set(() => ({ cards })),
+      setDrawPile: (drawPile: string[]) => set(() => ({ drawPile })),
+      setDiscardPile: (discardPile: string[]) => set(() => ({ discardPile })),
       setOrder: (order: string[]) => set(() => ({ order })),
       setConnectedPlayerId: (playerId: string) =>
         set(() => ({

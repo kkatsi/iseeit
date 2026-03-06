@@ -1,0 +1,50 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100dvh;
+  width: 100%;
+}
+
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  color: #3b2f2f;
+  background:
+    /* Charcoal grain texture overlay */
+    repeating-conic-gradient(
+        rgba(60, 50, 45, 0.03) 0% 25%,
+        transparent 0% 50%
+      )
+      0 0 / 4px 4px,
+    /* Subtle fibrous streaks */
+    repeating-linear-gradient(
+      120deg,
+      transparent,
+      transparent 40px,
+      rgba(80, 65, 55, 0.04) 40px,
+      rgba(80, 65, 55, 0.04) 41px
+    ),
+    repeating-linear-gradient(
+      60deg,
+      transparent,
+      transparent 55px,
+      rgba(90, 75, 60, 0.03) 55px,
+      rgba(90, 75, 60, 0.03) 56px
+    ),
+    /* Paper-like warm gradient base */
+    radial-gradient(
+      ellipse at 30% 20%,
+      #f5ebe0 0%,
+      #ede0d4 40%,
+      #ddd0c2 70%,
+      #d4c4b0 100%
+    );
+  background-attachment: fixed;
+}

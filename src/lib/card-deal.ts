@@ -1,34 +1,66 @@
-import type { Player } from '../schemas/player';
 import { cardIds } from '../constants';
-import type { PlayersDataMap } from './game-store';
+import { shuffleItems } from '../utils/shuffle';
 
 const CARD_BASE_URL = import.meta.env.VITE_CARD_BASE_URL;
 
-export const dealCards = (
-  playersData: PlayersDataMap,
-  cardsPerPlayer: number = 1,
-): Map<Player['id'], string[]> => {
-  const playerIds = [...playersData.keys()];
-  const totalCardsNeeded = playerIds.length * cardsPerPlayer;
+const toCardUrl = (cardId: string) => `${CARD_BASE_URL}/cards/${cardId}.png`;
 
-  if (totalCardsNeeded > cardIds.length) {
-    throw new Error(
-      `Not enough cards: need ${totalCardsNeeded} but only ${cardIds.length} available`,
-    );
+/**
+ * Creates a shuffled draw pile from all card IDs (as URLs).
+ */
+export const createDeck = (): string[] =>
+  shuffleItems(cardIds.map(toCardUrl));
+
+/**
+ * Draws `count` cards from the draw pile.
+ * If draw pile runs out, reshuffles discard pile into it.
+ * Returns the drawn cards and updated piles.
+ */
+export const drawCards = (
+  count: number,
+  drawPile: string[],
+  discardPile: string[],
+): { drawn: string[]; drawPile: string[]; discardPile: string[] } => {
+  let currentDraw = [...drawPile];
+  let currentDiscard = [...discardPile];
+  const drawn: string[] = [];
+
+  for (let i = 0; i < count; i++) {
+    if (currentDraw.length === 0) {
+      if (currentDiscard.length === 0) break; // no cards left anywhere
+      currentDraw = shuffleItems(currentDiscard);
+      currentDiscard = [];
+    }
+    drawn.push(currentDraw.pop()!);
   }
 
-  const shuffled = [...cardIds].sort(() => Math.random() - 0.5);
+  return { drawn, drawPile: currentDraw, discardPile: currentDiscard };
+};
 
-  const result = new Map<Player['id'], string[]>();
+/**
+ * Deals `cardsPerPlayer` cards to each player from the draw pile.
+ * Returns player hands and updated piles.
+ */
+export const dealToPlayers = (
+  playerIds: string[],
+  cardsPerPlayer: number,
+  drawPile: string[],
+  discardPile: string[] = [],
+): {
+  hands: Map<string, string[]>;
+  drawPile: string[];
+  discardPile: string[];
+} => {
+  let currentDraw = drawPile;
+  let currentDiscard = discardPile;
+  const hands = new Map<string, string[]>();
 
-  playerIds.forEach((playerId, index) => {
-    const start = index * cardsPerPlayer;
-    const playerCardIds = shuffled.slice(start, start + cardsPerPlayer);
-    const cardUrls = playerCardIds.map(
-      (cardId) => `${CARD_BASE_URL}/cards/${cardId}.png`,
-    );
-    result.set(playerId, cardUrls);
-  });
+  for (const playerId of playerIds) {
+    const result = drawCards(cardsPerPlayer, currentDraw, currentDiscard);
+    hands.set(playerId, result.drawn);
+    currentDraw = result.drawPile;
+    currentDiscard = result.discardPile;
+  }
 
-  return result;
+  return { hands, drawPile: currentDraw, discardPile: currentDiscard };
 };

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router';
-import { dealCards } from '../lib/card-deal';
+import { createDeck, dealToPlayers } from '../lib/card-deal';
 import { useGameStore, type PlayersDataMap } from '../lib/game-store';
 import type { GameEvent } from '../schemas/events';
 import type { Player } from '../schemas/player';
@@ -23,6 +23,8 @@ const useGameOrcestrator = () => {
   const setCards = useGameStore((state) => state.setCards);
   const resetRoundData = useGameStore((state) => state.resetRoundData);
   const resetPlayersReady = useGameStore((state) => state.resetPlayersReady);
+  const setDrawPile = useGameStore((state) => state.setDrawPile);
+  const setDiscardPile = useGameStore((state) => state.setDiscardPile);
 
   const startGame = (players: Map<Player['id'], Player>) => {
     const playersData = new Map(
@@ -48,14 +50,16 @@ const useGameOrcestrator = () => {
       storytellerId: getStoryteller(playingOrder, 1),
     });
 
-    const cards = dealCards(playersData);
-    const playerCards: Map<string, string[]> = new Map();
+    const deck = createDeck();
+    const { hands, drawPile } = dealToPlayers(
+      [...playersData.keys()],
+      6,
+      deck,
+    );
 
-    for (const [playerId] of playersData) {
-      playerCards.set(playerId, cards.get(playerId) || []);
-    }
-
-    setCards(playerCards);
+    setCards(hands);
+    setDrawPile(drawPile);
+    setDiscardPile([]);
 
     for (const [playerId] of playersData) {
       syncGameState(playerId);
@@ -167,7 +171,7 @@ const useGameOrcestrator = () => {
   };
 
   const advanceToNextRound = () => {
-    const { order, round, playersData, scoreThreshhold } =
+    const { order, round, playersData, scoreThreshhold, drawPile, discardPile, cards } =
       useGameStore.getState();
 
     const hasWinner = [...playersData.values()].some(
@@ -177,6 +181,28 @@ const useGameOrcestrator = () => {
     if (hasWinner) {
       setPhase('GAME_END');
       return;
+    }
+
+    // Move played cards to discard pile
+    const playedCards: string[] = [];
+    if (round.storytellerCard) playedCards.push(round.storytellerCard);
+    if (round.submittedCards) {
+      for (const card of round.submittedCards.values()) {
+        playedCards.push(card);
+      }
+    }
+    const updatedDiscard = [...discardPile, ...playedCards];
+
+    // Deal 1 card per player
+    const playerIds = [...playersData.keys()];
+    const { hands: newCards, drawPile: newDrawPile, discardPile: newDiscardPile } =
+      dealToPlayers(playerIds, 1, drawPile, updatedDiscard);
+
+    // Merge new cards into existing hands
+    const updatedCards = new Map(cards);
+    for (const [playerId, drawn] of newCards) {
+      const existing = updatedCards.get(playerId) || [];
+      updatedCards.set(playerId, [...existing, ...drawn]);
     }
 
     resetRoundData();
@@ -189,6 +215,9 @@ const useGameOrcestrator = () => {
       number: nextRoundNumber,
       storytellerId: getStoryteller(order, nextRoundNumber),
     });
+    setCards(updatedCards);
+    setDrawPile(newDrawPile);
+    setDiscardPile(newDiscardPile);
 
     const currentPlayersData = useGameStore.getState().playersData;
 
