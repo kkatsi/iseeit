@@ -1,11 +1,12 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import type { Player } from '../schemas/player';
-import { SLOT_POSITIONS } from '../constants';
+import { avatarIds, SLOT_POSITIONS } from '../constants';
 
 export type LobbyPlayer = Player & {
   slotIndex: number;
   connectionId: string;
+  avatarId: string;
 };
 
 type LobbyStore = {
@@ -35,11 +36,23 @@ export const useLobbyStore = create<LobbyStore>()(
           const slotIndex =
             available[Math.floor(Math.random() * available.length)];
 
+          const usedAvatars = new Set(
+            [...state.players.values()].map((p) => p.avatarId),
+          );
+          const availableAvatars = avatarIds.filter(
+            (id) => !usedAvatars.has(id),
+          );
+          const avatarId =
+            availableAvatars[
+              Math.floor(Math.random() * availableAvatars.length)
+            ];
+
           const newPlayers = new Map(state.players);
           newPlayers.set(player.id, {
             ...player,
             slotIndex,
             connectionId,
+            avatarId,
           });
           return { players: newPlayers };
         }),

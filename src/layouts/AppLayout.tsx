@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router';
 import PaperBackground from '../components/PaperBackground';
 
-const MainLayout = () => {
+const AppLayout = () => {
   return (
     <>
       <PaperBackground />
@@ -10,4 +10,4 @@ const MainLayout = () => {
   );
 };
 
-export default MainLayout;
+export default AppLayout;

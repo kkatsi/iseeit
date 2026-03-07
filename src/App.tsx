@@ -1,18 +1,18 @@
 import { Route, Routes } from 'react-router';
 import Connect from './pages/Client/Connect';
 import ClientPlay from './pages/Client/Play';
-import Lobby from './pages/Host/Lobby';
+import Lobby from './features/host-lobby/pages/Lobby';
 import Game from './pages/Host/Game';
 import HostLayout from './layouts/HostLayout';
 import ClientLayout from './layouts/ClientLayout';
-import MainLayout from './layouts/MainLayout';
+import AppLayout from './layouts/AppLayout';
 
 function App() {
   return (
     <Routes>
       <Route
         path="/"
-        element={<MainLayout />}
+        element={<AppLayout />}
       >
         <Route
           path="/"
