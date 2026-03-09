@@ -2,10 +2,11 @@ export const MysticalElementFlower = () => (
   <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-80">
     <svg
       viewBox="0 0 200 250"
-      className="w-full h-full text-foreground/10"
+      className="w-full h-full"
+      style={{ color: 'rgba(45, 42, 38, 0.1)' }}
     >
       <path
-        d="M100,250 L100,150 
+        d="M100,250 L100,150
                    M100,150 Q60,140 40,100 Q30,70 50,50 Q70,30 100,40
                    M100,150 Q140,140 160,100 Q170,70 150,50 Q130,30 100,40
                    M100,40 Q80,20 100,5 Q120,20 100,40
@@ -20,8 +21,10 @@ export const MysticalElementFlower = () => (
       />
     </svg>
     <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2">
-      <div className="w-20 h-20 rounded-full bg-accent/30 blur-xl animate-pulse" />
-      <div className="absolute inset-0 w-20 h-20 rounded-full bg-accent/20 blur-md" />
+      <div
+        className="w-20 h-20 rounded-full animate-pulse"
+        style={{ backgroundColor: 'rgba(196, 147, 122, 0.15)' }}
+      />
     </div>
   </div>
 );

@@ -36,16 +36,7 @@ export const useLobbyStore = create<LobbyStore>()(
           const slotIndex =
             available[Math.floor(Math.random() * available.length)];
 
-          const usedAvatars = new Set(
-            [...state.players.values()].map((p) => p.avatarId),
-          );
-          const availableAvatars = avatarIds.filter(
-            (id) => !usedAvatars.has(id),
-          );
-          const avatarId =
-            availableAvatars[
-              Math.floor(Math.random() * availableAvatars.length)
-            ];
+          const avatarId = avatarIds[slotIndex];
 
           const newPlayers = new Map(state.players);
           newPlayers.set(player.id, {

@@ -1,3 +1,6 @@
+import { motion } from 'framer-motion';
+import { avatarIds } from '../../../constants';
+
 export const EmptyPlayerSlot = ({
   position,
   slotIndex,
@@ -7,15 +10,29 @@ export const EmptyPlayerSlot = ({
 }) => (
   <div
     key={`empty-${slotIndex}`}
-    className="absolute opacity-60"
+    className="absolute"
     style={{
       left: `${position.x}%`,
       top: `${position.y}%`,
       transform: 'translate(-50%, -50%)',
     }}
   >
-    <div className="w-16 h-20 border-2 border-dashed border-muted-foreground/30 rounded-2xl flex items-center justify-center">
-      <span className="text-2xl text-muted-foreground/30">?</span>
-    </div>
+    <motion.div
+      animate={{ opacity: [0.3, 0.5, 0.3] }}
+      transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+      className="relative w-20 text-center"
+    >
+      <img
+        src={`/avatars/${avatarIds[slotIndex]}.png`}
+        alt=""
+        className="w-16 h-16 rounded-full mx-auto object-cover grayscale"
+      />
+      <span
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-handwritten text-[28px]"
+        style={{ color: 'rgba(107, 101, 96, 0.6)' }}
+      >
+        ?
+      </span>
+    </motion.div>
   </div>
 );

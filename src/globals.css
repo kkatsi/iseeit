@@ -46,7 +46,7 @@
 
 @theme inline {
   --font-serif: 'Crimson Text', Georgia, serif;
-  --font-handwritten: 'Caveat', cursive;
+  --font-handwritten: 'Mansalva', serif;
   --font-sans: 'Crimson Text', Georgia, serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -73,7 +73,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
 
   body {

@@ -8,5 +8,12 @@ export default defineConfig({
   server: {
     host: true,
   },
+  css: {
+    lightningcss: {
+      targets: {
+        chrome: (61 << 16),
+      },
+    },
+  },
   plugins: [react(), mkcert(), tailwindcss()],
 });

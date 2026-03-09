@@ -1,10 +1,10 @@
 import { Outlet } from 'react-router';
-import PaperBackground from '../components/PaperBackground';
+// import PaperBackground from '../components/PaperBackground';
 
 const AppLayout = () => {
   return (
     <>
-      <PaperBackground />
+      {/* <PaperBackground /> */}
       <Outlet />
     </>
   );

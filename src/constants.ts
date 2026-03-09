@@ -39,17 +39,20 @@ export const avatarIds = [
 export const LOCAL_STORAGE_STATE_KEY = 'iseeitState';
 export const SCORE_THRESHOLD = 40;
 export const SLOT_POSITIONS = [
-  { x: 10, y: 8 },
-  { x: 50, y: 6 },
-  { x: 28, y: 26 },
-  { x: 52, y: 30 },
-  { x: 8, y: 32 },
-  { x: 10, y: 55 },
-  { x: 35, y: 52 },
-  { x: 62, y: 56 },
-  { x: 88, y: 53 },
-  { x: 20, y: 80 },
-  { x: 45, y: 75 },
-  { x: 75, y: 82 },
+  // Row 1 — top band, below header
+  { x: 7, y: 17 },
+  { x: 30, y: 21 },
+  { x: 52, y: 15 },
+  { x: 70, y: 24 },
+  // Row 2 — middle band
+  { x: 14, y: 44 },
+  { x: 38, y: 38 },
+  { x: 60, y: 46 },
+  { x: 82, y: 40 },
+  // Row 3 — lower band
+  { x: 9, y: 72 },
+  { x: 33, y: 66 },
+  { x: 56, y: 76 },
+  { x: 78, y: 68 },
 ] as const;
 export const MAX_PLAYERS = 12;
