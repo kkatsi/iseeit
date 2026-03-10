@@ -1,10 +1,12 @@
 import { useAnimationControls } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { wait } from '../../../utils/wait';
 
-const useLobbyAninations = (roomId?: string) => {
+const useLobbyAnimations = (roomId?: string) => {
   const containerControls = useAnimationControls();
   const uiControls = useAnimationControls();
   const [introComplete, setIntroComplete] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const isReady = introComplete && !!roomId;
 
@@ -29,11 +31,30 @@ const useLobbyAninations = (roomId?: string) => {
     }
   }, [isReady, uiControls]);
 
+  const gameStartTransition = async () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+
+    await uiControls.start({
+      opacity: 0,
+      transition: { duration: 1, ease: 'easeInOut' },
+    });
+
+    containerControls.start({
+      scale: 4,
+      opacity: 0,
+      transition: { duration: 0.8, ease: 'easeInOut' },
+    });
+
+    await wait(600);
+  };
+
   return {
     containerControls,
     uiControls,
     introComplete,
+    gameStartTransition,
   };
 };
 
-export default useLobbyAninations;
+export default useLobbyAnimations;

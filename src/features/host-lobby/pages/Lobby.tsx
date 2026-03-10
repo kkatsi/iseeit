@@ -1,46 +1,29 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
 import { useOutletContext } from 'react-router';
 import { SLOT_POSITIONS } from '../../../constants';
 import useGameOrcestrator from '../../../hooks/useGameOrchestrator';
 import { useLobbyStore } from '../../../lib/lobby-store';
 import type { HostOutletContextType } from '../../../types';
-import { wait } from '../../../utils/wait';
 import { EmptyPlayerSlot } from '../components/EmptyPlayerSlot';
 import { Header } from '../components/Header';
+import Loader from '../components/Loader';
 import { PlayerCount } from '../components/PlayerCount';
 import { PlayerSlot } from '../components/PlayerSlot';
 import { QR } from '../components/QR';
 import { StartGameButton } from '../components/StartGameButton';
-import useLobbyAninations from '../hooks/useLobbyAninations';
-import Loader from '../components/Loader';
+import useLobbyAnimations from '../hooks/useLobbyAnimations';
 
 const Lobby = () => {
   const { roomId } = useOutletContext<HostOutletContextType>();
 
   const lobbyPlayers = useLobbyStore((state) => state.players);
   const { startGame } = useGameOrcestrator();
-  const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const { containerControls, introComplete, uiControls } =
-    useLobbyAninations(roomId);
+  const { containerControls, introComplete, gameStartTransition, uiControls } =
+    useLobbyAnimations(roomId);
 
   const handleStartGame = async () => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-
-    await uiControls.start({
-      opacity: 0,
-      transition: { duration: 1, ease: 'easeInOut' },
-    });
-
-    containerControls.start({
-      scale: 4,
-      opacity: 0,
-      transition: { duration: 0.8, ease: 'easeInOut' },
-    });
-
-    await wait(600);
+    await gameStartTransition();
 
     startGame(lobbyPlayers);
   };
@@ -63,7 +46,6 @@ const Lobby = () => {
         {introComplete && !roomId && <Loader />}
       </AnimatePresence>
 
-      {/* Lobby UI — fades in once isReady */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={uiControls}
