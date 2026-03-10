@@ -7,8 +7,7 @@ export const Header = () => (
       <div
         className="h-px w-24"
         style={{
-          background:
-            'linear-gradient(to right, transparent, var(--border))',
+          background: 'linear-gradient(to right, transparent, var(--border))',
         }}
       />
       <span className="text-2xl text-muted-foreground tracking-widest font-handwritten">
@@ -17,8 +16,7 @@ export const Header = () => (
       <div
         className="h-px w-24"
         style={{
-          background:
-            'linear-gradient(to left, transparent, var(--border))',
+          background: 'linear-gradient(to left, transparent, var(--border))',
         }}
       />
     </div>
