@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router';
-import Connect from './pages/Client/Connect';
+import Connect from './features/client-connect/pages/Connect';
 import ClientPlay from './pages/Client/Play';
 import Lobby from './features/host-lobby/pages/Lobby';
 import Game from './pages/Host/Game';

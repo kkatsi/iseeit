@@ -6,14 +6,16 @@ import { getFromLocalStorage, saveToLocalStorage } from '../lib/local-storage';
 import { usePeerStore } from '../lib/peer-store';
 import {
   gameEventSchema,
+  type ConnectedEvent,
   type GameEvent,
-  type JoinedEvent,
   type ReconnectEvent,
 } from '../schemas/events';
+import { useLobbyStore, type LobbyPlayer } from '../lib/lobby-store';
 
 const useConnectPeer = (roomId?: string | null) => {
   const addConnection = usePeerStore((state) => state.addConnection);
   const removeConnection = usePeerStore((state) => state.removeConnection);
+  const setLocalPlayerId = usePeerStore((state) => state.setLocalPlayerId);
   const setPlayerConnected = useGameStore((state) => state.setPlayerConnected);
   const setPhase = useGameStore((state) => state.setPhase);
   const setCards = useGameStore((state) => state.setCards);
@@ -21,6 +23,7 @@ const useConnectPeer = (roomId?: string | null) => {
   const setConnectedPlayerId = useGameStore(
     (state) => state.setConnectedPlayerId,
   );
+  const setPlayers = useLobbyStore((state) => state.setPlayers);
 
   const peerRef = useRef<Peer>(undefined);
 
@@ -53,12 +56,19 @@ const useConnectPeer = (roomId?: string | null) => {
         setConnectedPlayerId(event.playerId);
         break;
       }
+      case 'LOBBY_STATE_SYNC': {
+        const playersMap = new Map(
+          event.players.map((p) => [p.id, p as LobbyPlayer]),
+        );
+        setPlayers(playersMap);
+        break;
+      }
       default:
         break;
     }
   };
 
-  const connect = async (name: string) => {
+  const connectToRoom = async () => {
     if (!roomId) return;
 
     const playerId =
@@ -70,6 +80,8 @@ const useConnectPeer = (roomId?: string | null) => {
       value: { playerId, roomId },
     });
 
+    setLocalPlayerId(playerId);
+
     const peer = new Peer();
     peerRef.current = peer;
 
@@ -80,12 +92,9 @@ const useConnectPeer = (roomId?: string | null) => {
 
         connection.on('open', () => {
           connection.send({
-            type: 'JOINED',
-            player: {
-              id: playerId,
-              name,
-            },
-          } satisfies JoinedEvent);
+            type: 'CONNECTED',
+            playerId,
+          } satisfies ConnectedEvent);
 
           connection.on('data', (data) => {
             const result = gameEventSchema.safeParse(data);
@@ -109,6 +118,8 @@ const useConnectPeer = (roomId?: string | null) => {
     if (!stored?.playerId || !roomId) return;
 
     const { playerId } = stored;
+    setLocalPlayerId(playerId);
+
     const peer = new Peer();
     peerRef.current = peer;
 
@@ -140,7 +151,10 @@ const useConnectPeer = (roomId?: string | null) => {
     });
   };
 
-  return { connect, reconnect };
+  return {
+    connectToRoom,
+    reconnect,
+  };
 };
 
 export default useConnectPeer;

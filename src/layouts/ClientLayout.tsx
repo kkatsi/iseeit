@@ -4,9 +4,16 @@ import useConnectPeer from '../hooks/useConnectPeer';
 const ClientLayout = () => {
   const [searchParams] = useSearchParams();
   const roomId = searchParams.get('roomId');
-  const { connect, reconnect } = useConnectPeer(roomId);
+  const { connectToRoom, reconnect } = useConnectPeer(roomId);
 
-  return <Outlet context={{ connect, reconnect }} />;
+  return (
+    <Outlet
+      context={{
+        connectToRoom,
+        reconnect,
+      }}
+    />
+  );
 };
 
 export default ClientLayout;

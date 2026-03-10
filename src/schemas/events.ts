@@ -52,6 +52,37 @@ const reconnectEventSchema = z.object({
   playerId: z.uuidv4(),
 });
 
+const connectedEventSchema = z.object({
+  type: z.literal('CONNECTED'),
+  playerId: z.uuidv4(),
+});
+
+const avatarSelectEventSchema = z.object({
+  type: z.literal('AVATAR_SELECT'),
+  playerId: z.uuidv4(),
+  avatarId: z.string(),
+});
+
+const lobbyStateSyncSchema = z.object({
+  type: z.literal('LOBBY_STATE_SYNC'),
+  players: z.array(
+    z.object({
+      id: z.uuidv4(),
+      connectionId: z.string(),
+      avatarId: z.string(),
+      status: z.enum(['pending', 'ready']),
+      name: z.string().optional(),
+    }),
+  ),
+});
+
+const playerSetupCompleteEventSchema = z.object({
+  type: z.literal('PLAYER_SETUP_COMPLETE'),
+  playerId: z.uuidv4(),
+  name: z.string(),
+  avatarId: z.string(),
+});
+
 export const gameEventSchema = z.discriminatedUnion('type', [
   joinedEventSchema,
   playerReadyEventSchema,
@@ -60,6 +91,10 @@ export const gameEventSchema = z.discriminatedUnion('type', [
   playerSelectsCardEventSchema,
   votingEventSchema,
   reconnectEventSchema,
+  connectedEventSchema,
+  avatarSelectEventSchema,
+  lobbyStateSyncSchema,
+  playerSetupCompleteEventSchema,
 ]);
 
 export type GameEvent = z.infer<typeof gameEventSchema>;
@@ -73,3 +108,9 @@ export type PlayerSelectsCardEvent = z.infer<
 >;
 export type VotingEvent = z.infer<typeof votingEventSchema>;
 export type ReconnectEvent = z.infer<typeof reconnectEventSchema>;
+export type ConnectedEvent = z.infer<typeof connectedEventSchema>;
+export type AvatarSelectEvent = z.infer<typeof avatarSelectEventSchema>;
+export type LobbyStateSyncEvent = z.infer<typeof lobbyStateSyncSchema>;
+export type PlayerSetupCompleteEvent = z.infer<
+  typeof playerSetupCompleteEventSchema
+>;

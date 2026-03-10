@@ -56,3 +56,4 @@ export const SLOT_POSITIONS = [
   { x: 78, y: 68 },
 ] as const;
 export const MAX_PLAYERS = 12;
+export const HEARTBEAT_INTERVAL = 3000;

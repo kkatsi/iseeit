@@ -1,5 +1,5 @@
 export type RoomOutletContextType = {
-  connect: (name: string) => Promise<void>;
+  connectToRoom: () => Promise<void>;
   reconnect: () => Promise<void>;
 };
 
