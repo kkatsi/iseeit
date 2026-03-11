@@ -3,6 +3,7 @@ import type { RoomOutletContextType } from '@/types';
 import { useOutletContext } from 'react-router';
 import Avatars from '../components/avatars';
 import { useClientConnect } from '../hooks/use-client-connect';
+import Announcement from '@/components/announcement';
 
 const Connect = () => {
   const { connectToRoom, reconnect } =
@@ -23,26 +24,11 @@ const Connect = () => {
   } = useClientConnect(connectToRoom, reconnect, connection, playerId);
 
   if (shouldReconnect) {
-    return (
-      <div className="min-h-dvh flex items-center justify-center bg-background">
-        <p className="font-handwritten text-2xl text-foreground">
-          Returning to the tale...
-        </p>
-      </div>
-    );
+    return <Announcement>Returning to the tale...</Announcement>;
   }
 
   if (!connection) {
-    return (
-      <div className="min-h-dvh flex items-center justify-center bg-background">
-        <div className="text-center">
-          <div className="mx-auto mb-4 w-10 h-10 rounded-full border-4 border-[rgba(61,90,71,0.2)] border-t-[rgba(61,90,71,0.8)] animate-spin" />
-          <p className="font-handwritten text-2xl text-foreground">
-            Entering the realm...
-          </p>
-        </div>
-      </div>
-    );
+    return <Announcement>Entering the realm...</Announcement>;
   }
 
   // if (isFinalized) {

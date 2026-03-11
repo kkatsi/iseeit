@@ -1,5 +1,7 @@
+import Announcement from '@/components/announcement';
+
 const DealPhase = () => {
-  return <div>Cards are going out to the players...</div>;
+  return <Announcement>Cards are going out to the players...</Announcement>;
 };
 
 export default DealPhase;

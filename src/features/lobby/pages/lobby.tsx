@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useOutletContext } from 'react-router';
 import { avatarIds, SLOT_POSITIONS } from '@/config/constants';
 import useGameOrcestrator from '@/hooks/use-game-orchestrator';
@@ -14,6 +14,7 @@ import { PlayerSlot } from '../components/player-slot';
 import { QR } from '../components/qr';
 import { StartGameButton } from '../components/start-game-button';
 import useLobbyAnimations from '../hooks/use-lobby-animations';
+import { preloadRoute } from '@/utils/preload-route';
 
 const Lobby = () => {
   const { roomId } = useOutletContext<HostOutletContextType>();
@@ -28,6 +29,10 @@ const Lobby = () => {
     () => [...lobbyPlayers.values()].filter((p) => p.status === 'ready'),
     [lobbyPlayers],
   );
+
+  useEffect(() => {
+    if (readyPlayers.length > 0) preloadRoute('game');
+  }, [readyPlayers.length]);
 
   const handleStartGame = async () => {
     await gameStartTransition();
