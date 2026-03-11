@@ -13,17 +13,17 @@ const playerReadyEventSchema = z.object({
 
 const playerSelectsCardEventSchema = z.object({
   type: z.literal('PLAYER_SELECTS_CARD'),
-  card: z.string(),
+  card: z.url(),
   playerId: z.uuidv4(),
 });
 
 const gameStateSyncSchema = z.object({
   playerId: z.uuidv4(),
   type: z.literal('GAME_STATE_SYNC'),
-  cards: z.array(z.string()),
+  cards: z.array(z.url()),
   storytellerId: z.uuidv4(),
-  clue: z.string().optional(),
-  tableCards: z.array(z.string()).optional(),
+  clue: z.string().max(200).optional(),
+  tableCards: z.array(z.url()).optional(),
   roundScore: z.number(),
   phase: z.enum([
     'CARD_DEAL',
@@ -37,13 +37,13 @@ const gameStateSyncSchema = z.object({
 
 const storyTellerClueEventSchema = z.object({
   type: z.literal('STORYTELLER_CLUE'),
-  clue: z.string(),
-  card: z.string(),
+  clue: z.string().min(1).max(200),
+  card: z.url(),
 });
 
 const votingEventSchema = z.object({
   type: z.literal('VOTING'),
-  card: z.string(),
+  card: z.url(),
   playerId: z.uuidv4(),
 });
 
@@ -60,7 +60,7 @@ const connectedEventSchema = z.object({
 const avatarSelectEventSchema = z.object({
   type: z.literal('AVATAR_SELECT'),
   playerId: z.uuidv4(),
-  avatarId: z.string(),
+  avatarId: z.string().startsWith('avatar-'),
 });
 
 const lobbyStateSyncSchema = z.object({
@@ -69,9 +69,9 @@ const lobbyStateSyncSchema = z.object({
     z.object({
       id: z.uuidv4(),
       connectionId: z.string(),
-      avatarId: z.string(),
+      avatarId: z.string().startsWith('avatar-'),
       status: z.enum(['pending', 'ready']),
-      name: z.string().optional(),
+      name: z.string().min(1).max(16).optional(),
     }),
   ),
 });
@@ -79,8 +79,8 @@ const lobbyStateSyncSchema = z.object({
 const playerSetupCompleteEventSchema = z.object({
   type: z.literal('PLAYER_SETUP_COMPLETE'),
   playerId: z.uuidv4(),
-  name: z.string(),
-  avatarId: z.string(),
+  name: z.string().min(1).max(16),
+  avatarId: z.string().startsWith('avatar-'),
 });
 
 export const gameEventSchema = z.discriminatedUnion('type', [

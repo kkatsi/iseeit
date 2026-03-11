@@ -1,5 +1,5 @@
-import { cardIds } from '../constants';
-import { shuffleItems } from '../utils/shuffle';
+import { cardIds } from '@/config/constants';
+import { shuffleItems } from '@/utils/shuffle';
 
 const CARD_BASE_URL = import.meta.env.VITE_CARD_BASE_URL;
 

@@ -1,6 +1,6 @@
-import { useGameStore, type PlayersDataMap } from '../lib/game-store';
-import { usePeerStore } from '../lib/peer-store';
-import type { GameStateSyncEvent } from '../schemas/events';
+import { useGameStore, type PlayersDataMap } from '@/stores/game-store';
+import { usePeerStore } from '@/stores/peer-store';
+import type { GameStateSyncEvent } from '@/schemas/events';
 import { shuffleItems } from './shuffle';
 
 export const calculatePlayingOrder = (playersData: PlayersDataMap) => {
