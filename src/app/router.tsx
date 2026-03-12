@@ -3,6 +3,7 @@ import { paths } from '@/config/paths';
 import AppLayout from '@/app/layouts/app-layout';
 import HostLayout from '@/app/layouts/host-layout';
 import ClientLayout from '@/app/layouts/client-layout';
+import DealPhase from '@/features/game/client/deal-phase';
 const convert = (m: { default: React.ComponentType }) => ({
   Component: m.default,
 });
@@ -42,6 +43,7 @@ const createRouter = () =>
             },
           ],
         },
+        { path: '/test', Component: DealPhase },
       ],
     },
   ]);

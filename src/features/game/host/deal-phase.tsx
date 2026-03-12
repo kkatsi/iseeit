@@ -1,6 +1,5 @@
 import {
   CARD_DEAL_DURATION,
-  CARD_DEAL_STAGGER,
   DEAL_PHASE_BUFFER_MS,
   DECK_INTRO_DELAY,
 } from '@/config/constants';
@@ -19,7 +18,7 @@ const DealPhase = ({ onComplete }: DealPhaseProps) => {
 
   const [dealFinished, setDealFinished] = useState(false);
 
-  const { dealDurationMs, dealSequence } = useDealSequence(
+  const { dealDurationMs, dealStagger, dealSequence } = useDealSequence(
     players,
     roundNumber,
   );
@@ -109,7 +108,7 @@ const DealPhase = ({ onComplete }: DealPhaseProps) => {
                 opacity: [1, 1, 0],
               }}
               transition={{
-                delay: DECK_INTRO_DELAY + dealIndex * CARD_DEAL_STAGGER,
+                delay: DECK_INTRO_DELAY + dealIndex * dealStagger,
                 duration: CARD_DEAL_DURATION,
                 ease: [0.22, 1, 0.36, 1],
               }}

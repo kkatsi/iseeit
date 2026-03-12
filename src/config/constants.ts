@@ -59,8 +59,8 @@ export const MAX_PLAYERS = 12;
 export const HEARTBEAT_INTERVAL = 3000;
 export const CONNECTION_TIMEOUT = 15000;
 
-// Deal animation timing
-export const CARD_DEAL_DURATION = 1; // seconds per card animation
-export const CARD_DEAL_STAGGER = 0.5; // seconds between each card deal
+// Deal animation timing (shared between host and client)
+export const CLIENT_CARD_DURATION = 2; // seconds per card on client (entrance + showcase + fan)
+export const CARD_DEAL_DURATION = 3; // seconds per flying card animation on host
 export const DECK_INTRO_DELAY = 1; // seconds before first card flies
 export const DEAL_PHASE_BUFFER_MS = 2000; // extra buffer for visual comfort/latency

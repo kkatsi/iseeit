@@ -1,4 +1,4 @@
-import { calculateDealDuration } from '@/lib/card-deal';
+import { calculateDealDuration, getHostDealStagger } from '@/lib/card-deal';
 import type { PlayersDataMap } from '@/stores/game-store';
 import { useMemo } from 'react';
 
@@ -7,6 +7,8 @@ export const useDealSequence = (
   roundNumber: number,
 ) => {
   const cardsPerPlayer = roundNumber === 1 ? 6 : 1;
+
+  const dealStagger = getHostDealStagger(players.size);
 
   const dealDurationMs =
     calculateDealDuration(players.size, cardsPerPlayer) * 1000;
@@ -31,6 +33,7 @@ export const useDealSequence = (
 
   return {
     dealDurationMs,
+    dealStagger,
     dealSequence,
   };
 };
