@@ -1,7 +1,16 @@
+import { z } from 'zod';
+
 interface SaveProps {
   name: string;
   value: string | number | boolean | object;
 }
+
+const localStorageStateSchema = z.object({
+  playerId: z.uuidv4(),
+  roomId: z.string(),
+});
+
+export type LocalStorageState = z.infer<typeof localStorageStateSchema>;
 
 function isLocalStorageSupported() {
   try {
@@ -14,18 +23,19 @@ function isLocalStorageSupported() {
   }
 }
 
-export const getFromLocalStorage = (name: string) => {
-  if (isLocalStorageSupported()) {
-    const item = localStorage.getItem(name);
-    if (item) {
-      try {
-        return JSON.parse(item);
-      } catch {
-        return item;
-      }
-    }
+export const getFromLocalStorage = (
+  name: string,
+): LocalStorageState | undefined => {
+  if (!isLocalStorageSupported()) return undefined;
+  const item = localStorage.getItem(name);
+  if (!item) return undefined;
+  try {
+    const parsed: unknown = JSON.parse(item);
+    return localStorageStateSchema.parse(parsed);
+  } catch {
+    localStorage.removeItem(name);
+    return undefined;
   }
-  return undefined;
 };
 
 export const saveToLocalStorage = ({ name, value }: SaveProps) => {

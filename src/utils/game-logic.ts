@@ -1,15 +1,12 @@
-import { useGameStore, type PlayersDataMap } from '../lib/game-store';
-import { usePeerStore } from '../lib/peer-store';
-import type { GameStateSyncEvent } from '../schemas/events';
+import { useGameStore, type PlayersDataMap } from '@/stores/game-store';
+import { usePeerStore } from '@/stores/peer-store';
+import type { GameStateSyncEvent } from '@/schemas/events';
 import { shuffleItems } from './shuffle';
 
 export const calculatePlayingOrder = (playersData: PlayersDataMap) => {
   const playerIds = [...playersData.keys()];
   return shuffleItems(playerIds);
 };
-
-export const areAllPlayersReady = (playersData: PlayersDataMap) =>
-  [...playersData.values()].every((player) => player.isReady);
 
 export const getStoryteller = (order: string[], roundNumber: number) =>
   order[(roundNumber - 1) % order.length];
