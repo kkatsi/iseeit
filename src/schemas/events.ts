@@ -6,11 +6,6 @@ const joinedEventSchema = z.object({
   player: playerSchema,
 });
 
-const playerReadyEventSchema = z.object({
-  type: z.literal('PLAYER_READY'),
-  playerId: z.uuidv4(),
-});
-
 const playerSelectsCardEventSchema = z.object({
   type: z.literal('PLAYER_SELECTS_CARD'),
   card: z.url(),
@@ -85,7 +80,6 @@ const playerSetupCompleteEventSchema = z.object({
 
 export const gameEventSchema = z.discriminatedUnion('type', [
   joinedEventSchema,
-  playerReadyEventSchema,
   gameStateSyncSchema,
   storyTellerClueEventSchema,
   playerSelectsCardEventSchema,
@@ -100,7 +94,6 @@ export const gameEventSchema = z.discriminatedUnion('type', [
 export type GameEvent = z.infer<typeof gameEventSchema>;
 
 export type JoinedEvent = z.infer<typeof joinedEventSchema>;
-export type PlayerReadyEvent = z.infer<typeof playerReadyEventSchema>;
 export type GameStateSyncEvent = z.infer<typeof gameStateSyncSchema>;
 export type StoryTellerClueEvent = z.infer<typeof storyTellerClueEventSchema>;
 export type PlayerSelectsCardEvent = z.infer<

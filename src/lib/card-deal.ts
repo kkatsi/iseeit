@@ -1,5 +1,23 @@
-import { cardIds } from '@/config/constants';
+import {
+  cardIds,
+  CARD_DEAL_DURATION,
+  CARD_DEAL_STAGGER,
+  DECK_INTRO_DELAY,
+} from '@/config/constants';
 import { shuffleItems } from '@/utils/shuffle';
+
+/**
+ * Calculates the total duration of the deal animation in seconds.
+ */
+export const calculateDealDuration = (
+  playerCount: number,
+  cardsPerPlayer: number,
+) => {
+  const totalCards = playerCount * cardsPerPlayer;
+  const lastCardDealDelay =
+    DECK_INTRO_DELAY + (totalCards - 1) * CARD_DEAL_STAGGER;
+  return lastCardDealDelay + CARD_DEAL_DURATION;
+};
 
 const CARD_BASE_URL = import.meta.env.VITE_CARD_BASE_URL;
 

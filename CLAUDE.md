@@ -54,3 +54,13 @@ Feature code lives in `src/features/` organized by domain (lobby, game/host, gam
 - TypeScript strict mode with no unused locals/parameters
 - Outlet context types defined in `src/types/index.ts`
 - Game constants (max players, score threshold, card/avatar IDs) in `src/config/constants.ts`
+
+## Browser Compatibility
+
+The host screen runs on **smart TV browsers** (WebOS, Tizen) which use older rendering engines. When writing styles:
+
+- **No Tailwind color/opacity shorthand** — Do NOT use `bg-[#color]/opacity` syntax (e.g. `bg-[#d4a26a]/20`). TV browsers don't support the CSS `color-mix()` or relative color syntax Tailwind generates for these.
+- **Use inline `rgba()` styles instead** — e.g. `style={{ backgroundColor: 'rgba(212, 162, 106, 0.2)' }}`
+- **Avoid modern CSS features** that lack wide support: `oklch()`, `color-mix()`, container queries, `:has()` selector, `dvh`/`svh` units. Prefer `vh`/`vw` and `min-height: 100vh` over `min-h-dvh`.
+- **Standard Tailwind utility classes are fine** — classes like `flex`, `rounded-xl`, `shadow-lg`, `blur-xl` etc. are safe since they compile to well-supported CSS.
+- This applies to **host-side components only** (`src/features/game/host/`, `src/features/lobby/`). Client components run on modern phones and don't have these restrictions.

@@ -8,9 +8,6 @@ export const calculatePlayingOrder = (playersData: PlayersDataMap) => {
   return shuffleItems(playerIds);
 };
 
-export const areAllPlayersReady = (playersData: PlayersDataMap) =>
-  [...playersData.values()].every((player) => player.isReady);
-
 export const getStoryteller = (order: string[], roundNumber: number) =>
   order[(roundNumber - 1) % order.length];
 

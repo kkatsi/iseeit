@@ -6,7 +6,6 @@ import type { Player } from '@/schemas/player';
 export type PlayerData = {
   score: number;
   name: string;
-  isReady: boolean;
   isConnected: boolean;
 };
 
@@ -42,7 +41,6 @@ type GameStore = {
   discardPile: string[];
   connectedPlayerId: string;
   resetRoundData: () => void;
-  resetPlayersReady: () => void;
   setConnectedPlayerId: (playerId: string) => void;
   setPhase: (phase: GamePhase) => void;
   setRound: (round: Partial<RoundState>) => void;
@@ -51,7 +49,6 @@ type GameStore = {
   setDrawPile: (drawPile: string[]) => void;
   setDiscardPile: (discardPile: string[]) => void;
   setPlayersData: (playersData: PlayersDataMap) => void;
-  setPlayerReady: (playerId: Player['id'], isReady: boolean) => void;
   setPlayerConnected: (playerId: Player['id'], isConnected: boolean) => void;
 };
 
@@ -61,17 +58,6 @@ export const useGameStore = create<GameStore>()(
       scoreThreshhold: SCORE_THRESHOLD,
       connectedPlayerId: '',
       playersData: new Map(),
-      resetPlayersReady: () =>
-        set((state) => {
-          const newPlayersData = new Map(state.playersData);
-          for (const [playerId, playerData] of newPlayersData) {
-            newPlayersData.set(playerId, { ...playerData, isReady: false });
-          }
-
-          return {
-            playersData: newPlayersData,
-          };
-        }),
       resetRoundData: () =>
         set((state) => {
           return {
@@ -98,17 +84,6 @@ export const useGameStore = create<GameStore>()(
         set(() => ({
           connectedPlayerId: playerId,
         })),
-      setPlayerReady: (playerId: Player['id'], isReady: boolean) =>
-        set((state) => {
-          const newPlayersData = new Map(state.playersData);
-          const currentPlayerData = newPlayersData.get(playerId);
-
-          if (!currentPlayerData) return {};
-
-          newPlayersData.set(playerId, { ...currentPlayerData, isReady });
-
-          return { playersData: newPlayersData };
-        }),
       setPlayerConnected: (playerId: Player['id'], isConnected: boolean) =>
         set((state) => {
           const newPlayersData = new Map(state.playersData);

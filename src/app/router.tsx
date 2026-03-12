@@ -3,7 +3,6 @@ import { paths } from '@/config/paths';
 import AppLayout from '@/app/layouts/app-layout';
 import HostLayout from '@/app/layouts/host-layout';
 import ClientLayout from '@/app/layouts/client-layout';
-
 const convert = (m: { default: React.ComponentType }) => ({
   Component: m.default,
 });
@@ -18,7 +17,10 @@ const createRouter = () =>
           path: paths.host.root,
           Component: HostLayout,
           children: [
-            { index: true, lazy: () => import('@/features/lobby/pages/lobby').then(convert) },
+            {
+              index: true,
+              lazy: () => import('@/features/lobby/pages/lobby').then(convert),
+            },
             {
               path: paths.host.game,
               lazy: () => import('@/features/game/host/game').then(convert),
@@ -31,7 +33,8 @@ const createRouter = () =>
           children: [
             {
               path: paths.client.connect,
-              lazy: () => import('@/features/client-connect/pages/connect').then(convert),
+              lazy: () =>
+                import('@/features/client-connect/pages/connect').then(convert),
             },
             {
               path: paths.client.play,
