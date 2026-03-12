@@ -18,7 +18,7 @@ const DealPhase = () => {
         return (
           <motion.div
             key={card}
-            className="absolute w-24 h-36 rounded-lg overflow-hidden shadow-xl"
+            className="absolute h-40 rounded-lg overflow-hidden shadow-xl aspect-2/3"
             style={{
               left: '50%',
               top: 0,
