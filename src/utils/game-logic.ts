@@ -1,4 +1,5 @@
 import { useGameStore, type PlayersDataMap } from '@/stores/game-store';
+import { useLobbyStore } from '@/stores/lobby-store';
 import { usePeerStore } from '@/stores/peer-store';
 import type { GameStateSyncEvent } from '@/schemas/events';
 import { shuffleItems } from './shuffle';
@@ -66,12 +67,15 @@ export const syncGameState = (playerId: string) => {
     useGameStore.getState().round;
   const cards = useGameStore.getState().cards?.get(playerId) || [];
   const phase = useGameStore.getState().phase;
+  const lobbyPlayer = useLobbyStore.getState().players.get(playerId);
 
   if (!connection) throw new Error('no connection');
 
   connection.send({
     type: 'GAME_STATE_SYNC',
     phase: phase || 'GAME_END',
+    name: lobbyPlayer?.name ?? '',
+    avatarId: lobbyPlayer?.avatarId ?? '',
     cards,
     storytellerId,
     ...(clue ? { clue } : {}),

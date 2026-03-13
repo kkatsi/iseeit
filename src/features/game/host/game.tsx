@@ -7,7 +7,6 @@ import VotingPhase from './voting-phase';
 
 const Game = () => {
   const { phase, transitionFromDeal } = useGameOrcestrator();
-  // const phase = 'CARD_DEAL'
 
   switch (phase) {
     case 'CARD_DEAL':

@@ -1,16 +1,13 @@
 import { useActionState, useEffect, useEffectEvent, useMemo } from 'react';
-import {
-  getFromLocalStorage,
-  removeFromLocalStorage,
-} from '@/lib/local-storage';
-import { LOCAL_STORAGE_STATE_KEY } from '@/config/constants';
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router';
 import type { DataConnection } from 'peerjs';
 import { useLobbyStore } from '@/stores/lobby-store';
+import { useGameStore } from '@/stores/game-store';
+import { getFromLocalStorage } from '@/lib/local-storage';
+import { LOCAL_STORAGE_STATE_KEY } from '@/config/constants';
 
 export const useClientConnect = (
   connectToRoom: () => Promise<void>,
-  reconnect: () => Promise<void>,
   connection?: DataConnection,
   playerId?: string,
 ) => {
@@ -23,15 +20,20 @@ export const useClientConnect = (
   const selectedAvatarId = useLobbyStore((state) =>
     playerId ? state.players.get(playerId)?.avatarId : undefined,
   );
+  const lobbyPlayers = useLobbyStore((state) => state.players);
+  const gamePhase = useGameStore((state) => state.phase);
 
-  // Derive reconnecting from localStorage check (no setState in effect)
-  const shouldReconnect = useMemo(() => {
+  // True if localStorage suggests a previous session for this room
+  const hasExistingSession = useMemo(() => {
     const stored = getFromLocalStorage(LOCAL_STORAGE_STATE_KEY);
     return !!(stored?.playerId && stored?.roomId === roomId);
   }, [roomId]);
 
+  // Keep showing the waiting screen until host responds with sync data
+  const isWaitingForSync =
+    hasExistingSession && !gamePhase && lobbyPlayers.size === 0;
+
   const connectToRoomEvent = useEffectEvent(connectToRoom);
-  const reconnectEvent = useEffectEvent(reconnect);
   const navigateToPlay = () => {
     navigate({
       pathname: '../play',
@@ -61,21 +63,17 @@ export const useClientConnect = (
     });
   };
 
-  // Auto-connect on mount (only if not reconnecting)
+  // Always connect on mount — host decides whether this is a fresh join or reconnect
   useEffect(() => {
-    if (shouldReconnect) return;
     connectToRoomEvent().catch((err) =>
       console.error('Connection failed:', err),
     );
-  }, [shouldReconnect]);
+  }, []);
 
-  // Reconnect flow
+  // If host responds with GAME_STATE_SYNC, gamePhase gets set → navigate to play
   useEffect(() => {
-    if (!shouldReconnect) return;
-    reconnectEvent()
-      .then(() => navigateToPlayEvent())
-      .catch(() => removeFromLocalStorage(LOCAL_STORAGE_STATE_KEY));
-  }, [shouldReconnect]);
+    if (gamePhase) navigateToPlayEvent();
+  }, [gamePhase]);
 
   const handleSubmit = (_: void | null, formData: FormData) => {
     const name = formData.get('name');
@@ -101,6 +99,6 @@ export const useClientConnect = (
     selectedAvatarId,
     isLoading: !!isLoading,
     submitAction,
-    shouldReconnect,
+    isWaitingForSync,
   };
 };

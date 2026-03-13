@@ -8,6 +8,7 @@ import StorytellerPhase from './storyteller-phase';
 import PlayersSelectCardPhase from './players-select-card-phase';
 import VotingPhase from './voting-phase';
 import ResultsPhase from './results-phase';
+import { WaitingScreen } from '@/components/waiting-screen';
 
 const Play = () => {
   const { playerId } = getFromLocalStorage(LOCAL_STORAGE_STATE_KEY) || {};
@@ -40,7 +41,7 @@ const Play = () => {
     case 'ROUND_RESULTS':
       return <ResultsPhase />;
     default:
-      return null;
+      return <WaitingScreen>Waiting for the host to begin...</WaitingScreen>;
   }
 };
 

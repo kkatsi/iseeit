@@ -15,6 +15,8 @@ const playerSelectsCardEventSchema = z.object({
 const gameStateSyncSchema = z.object({
   playerId: z.uuidv4(),
   type: z.literal('GAME_STATE_SYNC'),
+  name: z.string().min(1).max(16),
+  avatarId: z.string().startsWith('avatar-'),
   cards: z.array(z.url()),
   storytellerId: z.uuidv4(),
   clue: z.string().max(200).optional(),

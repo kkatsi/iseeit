@@ -41,10 +41,14 @@ const useOpenPeer = () => {
   const handleEvent = useEffectEvent(
     (event: GameEvent, connection: DataConnection) => {
       switch (event.type) {
-        case 'CONNECTED':
+        case 'CONNECTED': {
           addConnection(event.playerId, connection);
 
           connection.on('close', () => {
+            // If a newer connection replaced this one, skip cleanup
+            const current = usePeerStore.getState().connections.get(event.playerId);
+            if (current !== connection) return;
+
             const phase = useGameStore.getState().phase;
             if (!phase) removePlayer(event.playerId);
             removeConnection(event.playerId);
@@ -52,9 +56,19 @@ const useOpenPeer = () => {
             syncLobbyState();
           });
 
+          // If game is in progress and player exists, treat as reconnect
+          const phase = useGameStore.getState().phase;
+          const playersData = useGameStore.getState().playersData;
+          if (phase && playersData.has(event.playerId)) {
+            setPlayerConnected(event.playerId, true);
+            syncGameState(event.playerId);
+            break;
+          }
+
           addPendingPlayer(event.playerId, connection.connectionId);
           syncLobbyState();
           break;
+        }
 
         case 'AVATAR_SELECT':
           setPlayersAvatar(event.playerId, event.avatarId);
@@ -73,6 +87,8 @@ const useOpenPeer = () => {
           addConnection(event.playerId, connection);
 
           connection.on('close', () => {
+            const current = usePeerStore.getState().connections.get(event.playerId);
+            if (current !== connection) return;
             removeConnection(event.playerId);
             setPlayerConnected(event.playerId, false);
           });
@@ -87,8 +103,6 @@ const useOpenPeer = () => {
       }
     },
   );
-
-  const removePlayerEvent = useEffectEvent(removePlayer);
 
   useEffect(() => {
     const peer = new Peer();
@@ -107,23 +121,6 @@ const useOpenPeer = () => {
         }
 
         handleEvent(result.data, conn);
-      });
-
-      conn.on('close', () => {
-        const lobbyPlayers = useLobbyStore.getState().players;
-
-        const connections = [...lobbyPlayers.values()].map((playerData) => ({
-          connectionId: playerData.connectionId,
-          playerId: playerData.id,
-        }));
-        console.log({ connections });
-        const currentPlayerId = connections.find(
-          (c) => c.connectionId === conn.connectionId,
-        )?.playerId;
-        if (currentPlayerId) {
-          removePlayerEvent(currentPlayerId);
-          syncLobbyState();
-        }
       });
     });
 

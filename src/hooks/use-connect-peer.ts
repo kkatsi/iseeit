@@ -61,6 +61,22 @@ const useConnectPeer = (roomId?: string | null) => {
         });
         setCards(cardsMap);
         setConnectedPlayerId(event.playerId);
+
+        // Populate lobby store so WaitingScreen can display player identity
+        setPlayers(
+          new Map([
+            [
+              event.playerId,
+              {
+                id: event.playerId,
+                connectionId: '',
+                avatarId: event.avatarId,
+                name: event.name,
+                status: 'ready' as const,
+              },
+            ],
+          ]),
+        );
         break;
       }
       case 'LOBBY_STATE_SYNC': {
