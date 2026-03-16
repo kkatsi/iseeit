@@ -6,7 +6,8 @@ import StorytellerPhase from './storyteller-phase';
 import VotingPhase from './voting-phase';
 
 const Game = () => {
-  const { phase, transitionFromDeal } = useGameOrcestrator();
+  const { phase, transitionFromDeal, transitionToVoting } =
+    useGameOrcestrator();
 
   switch (phase) {
     case 'CARD_DEAL':
@@ -14,7 +15,7 @@ const Game = () => {
     case 'STORYTELLER_CLUE':
       return <StorytellerPhase />;
     case 'PLAYERS_SELECT_CARD':
-      return <PlayersSelectCardPhase />;
+      return <PlayersSelectCardPhase onComplete={transitionToVoting} />;
     case 'VOTING':
       return <VotingPhase />;
     case 'ROUND_RESULTS':

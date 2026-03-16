@@ -48,11 +48,14 @@ const Lobby = () => {
       initial={{ scale: 1.3, opacity: 0 }}
       animate={containerControls}
       className="w-full h-dvh relative overflow-hidden flex flex-col bg-no-repeat bg-cover bg-center"
-      style={{ backgroundImage: `url('ui/lobby-bg.jpg')` }}
+      style={{ backgroundImage: `url('ui/lobby-bg.png')` }}
     >
       <div
-        className="z-0 absolute inset-0 w-dvw h-dvh"
-        style={{ backgroundColor: 'rgba(245, 240, 230, 0.2)' }}
+        className="absolute top-0 left-0 w-full z-1 pointer-events-none h-[200px]"
+        style={{
+          background:
+            'linear-gradient(to bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0))',
+        }}
       />
 
       <AnimatePresence>

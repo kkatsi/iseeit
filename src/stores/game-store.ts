@@ -1,15 +1,15 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { SCORE_THRESHOLD } from '@/config/constants';
-import type { Player } from '@/schemas/player';
 
 export type PlayerData = {
   score: number;
   name: string;
+  avatarId: string;
   isConnected: boolean;
 };
 
-export type PlayersDataMap = Map<Player['id'], PlayerData>;
+export type PlayersDataMap = Map<string, PlayerData>;
 
 export type GamePhase =
   | 'CARD_DEAL'
@@ -49,7 +49,7 @@ type GameStore = {
   setDrawPile: (drawPile: string[]) => void;
   setDiscardPile: (discardPile: string[]) => void;
   setPlayersData: (playersData: PlayersDataMap) => void;
-  setPlayerConnected: (playerId: Player['id'], isConnected: boolean) => void;
+  setPlayerConnected: (playerId: string, isConnected: boolean) => void;
 };
 
 export const useGameStore = create<GameStore>()(
@@ -84,7 +84,7 @@ export const useGameStore = create<GameStore>()(
         set(() => ({
           connectedPlayerId: playerId,
         })),
-      setPlayerConnected: (playerId: Player['id'], isConnected: boolean) =>
+      setPlayerConnected: (playerId: string, isConnected: boolean) =>
         set((state) => {
           const newPlayersData = new Map(state.playersData);
           const currentPlayerData = newPlayersData.get(playerId);

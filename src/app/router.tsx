@@ -5,6 +5,7 @@ import HostLayout from '@/app/layouts/host-layout';
 import ClientLayout from '@/app/layouts/client-layout';
 import DealPhase from '@/features/game/client/deal-phase';
 import StorytellerPhase from '@/features/game/client/storyteller-phase';
+import PlayersSelectCardPhase from '@/features/game/host/players-select-card-phase';
 const convert = (m: { default: React.ComponentType }) => ({
   Component: m.default,
 });
@@ -44,7 +45,15 @@ const createRouter = () =>
             },
           ],
         },
-        { path: '/test', Component: StorytellerPhase },
+        {
+          path: '/test',
+          Component: () =>
+            PlayersSelectCardPhase({
+              onComplete: () => {
+                console.log('completed');
+              },
+            }),
+        },
       ],
     },
   ]);

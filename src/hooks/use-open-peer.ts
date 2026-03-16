@@ -46,7 +46,9 @@ const useOpenPeer = () => {
 
           connection.on('close', () => {
             // If a newer connection replaced this one, skip cleanup
-            const current = usePeerStore.getState().connections.get(event.playerId);
+            const current = usePeerStore
+              .getState()
+              .connections.get(event.playerId);
             if (current !== connection) return;
 
             const phase = useGameStore.getState().phase;
@@ -87,7 +89,9 @@ const useOpenPeer = () => {
           addConnection(event.playerId, connection);
 
           connection.on('close', () => {
-            const current = usePeerStore.getState().connections.get(event.playerId);
+            const current = usePeerStore
+              .getState()
+              .connections.get(event.playerId);
             if (current !== connection) return;
             removeConnection(event.playerId);
             setPlayerConnected(event.playerId, false);

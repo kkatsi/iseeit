@@ -1,9 +1,14 @@
 import z from 'zod';
-import { playerSchema } from './player';
 
 const joinedEventSchema = z.object({
   type: z.literal('JOINED'),
-  player: playerSchema,
+  player: z.object({
+    id: z.uuidv4(),
+    connectionId: z.string(),
+    avatarId: z.string().startsWith('avatar-'),
+    status: z.enum(['pending', 'ready']),
+    name: z.string().min(1).max(16).optional(),
+  }),
 });
 
 const playerSelectsCardEventSchema = z.object({
