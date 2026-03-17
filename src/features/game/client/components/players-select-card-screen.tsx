@@ -3,7 +3,7 @@ import { useGameStore } from '@/stores/game-store';
 import { usePeerStore } from '@/stores/peer-store';
 import type { PlayerSelectsCardEvent } from '@/schemas/events';
 
-const PlayersScreen = () => {
+const PlayersSelectCardScreen = () => {
   const playerId = useGameStore((state) => state.connectedPlayerId);
   const connection = usePeerStore((state) => state.connections).get(playerId);
   const cards = useGameStore((state) => state.cards).get(playerId);
@@ -51,4 +51,4 @@ const PlayersScreen = () => {
   );
 };
 
-export default PlayersScreen;
+export default PlayersSelectCardScreen;

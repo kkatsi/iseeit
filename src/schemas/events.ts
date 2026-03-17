@@ -28,6 +28,7 @@ const gameStateSyncSchema = z.object({
   tableCards: z.array(z.url()).optional(),
   ownSubmittedCard: z.url().optional(),
   roundScore: z.number(),
+  newCards: z.array(z.url()).optional(),
   phase: z.enum([
     'CARD_DEAL',
     'STORYTELLER_CLUE',

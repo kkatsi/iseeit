@@ -68,6 +68,8 @@ export const syncGameState = (playerId: string) => {
   const cards = useGameStore.getState().cards?.get(playerId) || [];
   const phase = useGameStore.getState().phase;
   const player = useGameStore.getState().playersData.get(playerId);
+  const roundNumber = useGameStore.getState().round.number;
+  const newCards = roundNumber === 1 ? cards : cards.slice(-1);
 
   if (!connection) throw new Error('no connection');
 
@@ -81,6 +83,7 @@ export const syncGameState = (playerId: string) => {
     ...(clue ? { clue } : {}),
     ...(tableCards ? { tableCards } : {}),
     ...(ownSubmittedCard ? { ownSubmittedCard } : {}),
+    ...(newCards.length > 0 ? { newCards } : {}),
     roundScore: roundScores?.get(playerId) ?? 0,
     playerId,
   } satisfies GameStateSyncEvent);

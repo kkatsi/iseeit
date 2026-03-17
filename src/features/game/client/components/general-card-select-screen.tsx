@@ -7,7 +7,11 @@ import useCardSelectSubmit from '../hooks/use-card-select-submit';
 import { WaitingScreen } from '@/components/waiting-screen';
 import { ClueBanner } from './clue-banner';
 
-const CardSelectScreen = ({ isStoryteller }: { isStoryteller?: boolean }) => {
+const GeneralCardSelectScreen = ({
+  isStoryteller,
+}: {
+  isStoryteller?: boolean;
+}) => {
   const playerId = useGameStore((state) => state.connectedPlayerId);
   const connection = usePeerStore((state) => state.connections).get(playerId);
   const cards = useGameStore((state) => state.cards).get(playerId);
@@ -99,12 +103,10 @@ const CardSelectScreen = ({ isStoryteller }: { isStoryteller?: boolean }) => {
           return (
             <motion.label
               key={card}
-              className="absolute rounded-lg overflow-hidden shadow-xl cursor-pointer"
+              className="absolute h-40 rounded-lg overflow-hidden shadow-xl aspect-2/3"
               style={{
                 left: '50%',
                 bottom: 0,
-                width: 96,
-                height: 144,
                 marginLeft: -48,
                 zIndex: isSelected ? totalCards + 1 : index,
               }}
@@ -136,4 +138,4 @@ const CardSelectScreen = ({ isStoryteller }: { isStoryteller?: boolean }) => {
   );
 };
 
-export default CardSelectScreen;
+export default GeneralCardSelectScreen;

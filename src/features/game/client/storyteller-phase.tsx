@@ -1,5 +1,5 @@
 import { useGameStore } from '@/stores/game-store';
-import CardSelectScreen from './components/card-select-screen';
+import CardSelectScreen from './components/general-card-select-screen';
 import { WaitingScreen } from '../../../components/waiting-screen';
 
 const StorytellerPhase = () => {

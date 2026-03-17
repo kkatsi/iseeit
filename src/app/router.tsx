@@ -2,6 +2,7 @@ import AppLayout from '@/app/layouts/app-layout';
 import ClientLayout from '@/app/layouts/client-layout';
 import HostLayout from '@/app/layouts/host-layout';
 import { paths } from '@/config/paths';
+import ResultsPhase from '@/features/game/client/results-phase';
 import { createBrowserRouter, RouterProvider } from 'react-router';
 const convert = (m: { default: React.ComponentType }) => ({
   Component: m.default,
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
             lazy: () => import('@/features/game/client/play').then(convert),
           },
         ],
+      },
+      {
+        path: '/test',
+        Component: ResultsPhase,
       },
     ],
   },

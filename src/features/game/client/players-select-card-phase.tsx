@@ -1,6 +1,6 @@
 import { WaitingScreen } from '@/components/waiting-screen';
 import { useGameStore } from '@/stores/game-store';
-import CardSelectScreen from './components/card-select-screen';
+import CardSelectScreen from './components/general-card-select-screen';
 
 const PlayersSelectCardPhase = () => {
   const playerId = useGameStore((state) => state.connectedPlayerId);

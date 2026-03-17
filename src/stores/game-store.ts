@@ -41,6 +41,8 @@ type GameStore = {
   drawPile: string[];
   discardPile: string[];
   connectedPlayerId: string;
+  newCards?: string[];
+  setNewCards: (cards: string[]) => void;
   resetRoundData: () => void;
   setConnectedPlayerId: (playerId: string) => void;
   setPhase: (phase: GamePhase) => void;
@@ -50,6 +52,7 @@ type GameStore = {
   setDrawPile: (drawPile: string[]) => void;
   setDiscardPile: (discardPile: string[]) => void;
   setPlayersData: (playersData: PlayersDataMap) => void;
+  applyRoundScores: () => void;
   setPlayerConnected: (playerId: string, isConnected: boolean) => void;
 };
 
@@ -58,6 +61,7 @@ export const useGameStore = create<GameStore>()(
     (set) => ({
       scoreThreshhold: SCORE_THRESHOLD,
       connectedPlayerId: '',
+      setNewCards: (cards: string[]) => set(() => ({ newCards: cards })),
       playersData: new Map(),
       resetRoundData: () =>
         set((state) => {
@@ -85,6 +89,23 @@ export const useGameStore = create<GameStore>()(
         set(() => ({
           connectedPlayerId: playerId,
         })),
+      applyRoundScores: () =>
+        set((state) => {
+          const { roundScores } = state.round;
+          if (!roundScores) return {};
+
+          const newPlayersData = new Map(state.playersData);
+          for (const [playerId, points] of roundScores) {
+            const player = newPlayersData.get(playerId);
+            if (player) {
+              newPlayersData.set(playerId, {
+                ...player,
+                score: player.score + points,
+              });
+            }
+          }
+          return { playersData: newPlayersData };
+        }),
       setPlayerConnected: (playerId: string, isConnected: boolean) =>
         set((state) => {
           const newPlayersData = new Map(state.playersData);

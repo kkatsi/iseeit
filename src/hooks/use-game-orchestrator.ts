@@ -168,8 +168,26 @@ const useGameOrcestrator = () => {
       discardPile: newDiscardPile,
     } = dealToPlayers(playerIds, 1, drawPile, updatedDiscard);
 
-    // Merge new cards into existing hands
+    // Remove played cards from hands
     const updatedCards = new Map(cards);
+    if (round.storytellerCard) {
+      const hand = updatedCards.get(round.storytellerId) || [];
+      updatedCards.set(
+        round.storytellerId,
+        hand.filter((c) => c !== round.storytellerCard),
+      );
+    }
+    if (round.submittedCards) {
+      for (const [pid, card] of round.submittedCards) {
+        const hand = updatedCards.get(pid) || [];
+        updatedCards.set(
+          pid,
+          hand.filter((c) => c !== card),
+        );
+      }
+    }
+
+    // Merge new cards into existing hands
     for (const [playerId, drawn] of newCards) {
       const existing = updatedCards.get(playerId) || [];
       updatedCards.set(playerId, [...existing, ...drawn]);
@@ -212,6 +230,8 @@ const useGameOrcestrator = () => {
   };
 
   const transitionToResults = () => {
+    const applyRoundScores = useGameStore.getState().applyRoundScores;
+    applyRoundScores();
     const currentPlayersData = useGameStore.getState().playersData;
     setPhase('ROUND_RESULTS');
     for (const [playerId] of currentPlayersData) {
