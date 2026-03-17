@@ -84,12 +84,20 @@ const CardBack = ({
   />
 );
 
-const CardFace = ({ src, alt }: { src: string; alt: string }) => (
+const CardFace = ({
+  src,
+  alt,
+  skipEntrance,
+}: {
+  src: string;
+  alt: string;
+  skipEntrance?: boolean;
+}) => (
   <motion.img
     src={src}
     alt={alt}
     className="w-full h-full object-cover"
-    initial={{ y: '100%', opacity: 0 }}
+    initial={skipEntrance ? false : { y: '100%', opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}
     transition={{
       type: 'spring',

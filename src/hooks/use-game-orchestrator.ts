@@ -10,6 +10,7 @@ import {
 } from '@/utils/game-logic';
 import { shuffleItems } from '@/utils/shuffle';
 import type { LobbyPlayer } from '@/stores/lobby-store';
+import { VOTING_COMPLETE_DELAY_MS } from '@/config/constants';
 
 const useGameOrcestrator = () => {
   const phase = useGameStore((state) => state.phase);
@@ -121,11 +122,14 @@ const useGameOrcestrator = () => {
               votes,
             }),
           });
-          setPhase('ROUND_RESULTS');
 
-          for (const [playerId] of currentPlayersData) {
-            syncGameState(playerId);
-          }
+          setTimeout(() => {
+            setPhase('ROUND_RESULTS');
+
+            for (const [playerId] of currentPlayersData) {
+              syncGameState(playerId);
+            }
+          }, VOTING_COMPLETE_DELAY_MS);
         }
         break;
       }
@@ -215,6 +219,14 @@ const useGameOrcestrator = () => {
     }
   };
 
+  const transitionToResults = () => {
+    const currentPlayersData = useGameStore.getState().playersData;
+    setPhase('ROUND_RESULTS');
+    for (const [playerId] of currentPlayersData) {
+      syncGameState(playerId);
+    }
+  };
+
   return {
     phase,
     startGame,
@@ -222,6 +234,7 @@ const useGameOrcestrator = () => {
     advanceToNextRound,
     transitionFromDeal,
     transitionToVoting,
+    transitionToResults,
   };
 };
 

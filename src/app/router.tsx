@@ -2,7 +2,6 @@ import AppLayout from '@/app/layouts/app-layout';
 import ClientLayout from '@/app/layouts/client-layout';
 import HostLayout from '@/app/layouts/host-layout';
 import { paths } from '@/config/paths';
-import VotingPhase from '@/features/game/client/voting-phase';
 import { createBrowserRouter, RouterProvider } from 'react-router';
 const convert = (m: { default: React.ComponentType }) => ({
   Component: m.default,
@@ -43,10 +42,10 @@ const createRouter = () =>
             },
           ],
         },
-        {
-          path: '/test',
-          Component: VotingPhase,
-        },
+        // {
+        //   path: '/test',
+        //   Component: VotingPhase,
+        // },
       ],
     },
   ]);

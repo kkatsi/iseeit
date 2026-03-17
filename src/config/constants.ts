@@ -70,3 +70,5 @@ export const COLLECT_STAGGER_MS = 300; // delay between each card collecting to 
 export const SHUFFLE_ANIMATION_MS = 2000;
 export const REVEAL_STAGGER_MS = 800; // delay between each card reveal
 export const POST_REVEAL_PAUSE_MS = 1500;
+// Voting phase timing
+export const VOTING_COMPLETE_DELAY_MS = 3000; // delay before transitioning to ROUND_RESULTS

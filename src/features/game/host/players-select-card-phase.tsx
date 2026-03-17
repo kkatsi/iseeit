@@ -5,6 +5,7 @@ import { ClueBanner } from './components/clue-banner';
 import { PlayerSlots } from './components/player-slots';
 import { ShufflingCardStack } from './components/shuffling-card-stack';
 import { usePlayersSelectCardSequence } from './hooks/use-players-select-card-sequence';
+import { ProgressText } from './components/progress-text';
 
 type Props = {
   onComplete: () => void;
@@ -60,16 +61,7 @@ const PlayersSelectCardPhase = ({ onComplete }: Props) => {
     >
       <ClueBanner clue={clue} />
 
-      <motion.p
-        key={localPhase}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: [0.4, 1, 0.4] }}
-        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-        className="font-serif text-xl"
-        style={{ color: 'rgba(92, 74, 61, 0.7)' }}
-      >
-        {progressText}
-      </motion.p>
+      <ProgressText key={localPhase}>{progressText}</ProgressText>
 
       {showPlayerGrid && (
         <PlayerSlots>
