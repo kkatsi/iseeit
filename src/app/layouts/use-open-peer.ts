@@ -10,7 +10,8 @@ import {
   type LobbyStateSyncEvent,
 } from '@/schemas/events';
 import { syncGameState } from '@/utils/game-logic';
-import useGameOrcestrator from './use-game-orchestrator';
+import { sendEvent } from '@/lib/peer';
+import { handleGameEvent } from '@/features/game/host/game-event-handler';
 
 const syncLobbyState = () => {
   const connections = usePeerStore.getState().connections;
@@ -22,7 +23,7 @@ const syncLobbyState = () => {
   } satisfies LobbyStateSyncEvent;
 
   for (const [, connection] of connections) {
-    connection.send(event);
+    sendEvent(connection, event);
   }
 };
 
@@ -36,7 +37,6 @@ const useOpenPeer = () => {
   const setPlayersAvatar = useLobbyStore((state) => state.setPlayersAvatar);
   const addConnection = usePeerStore((state) => state.addConnection);
   const removeConnection = usePeerStore((state) => state.removeConnection);
-  const { handleGameEvent } = useGameOrcestrator();
 
   const handleEvent = useEffectEvent(
     (event: GameEvent, connection: DataConnection) => {

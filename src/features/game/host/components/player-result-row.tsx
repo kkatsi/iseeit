@@ -1,4 +1,4 @@
-import type { PlayerScore } from '@/types';
+import type { PlayerScore } from '../types';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export const PlayerResultRow = ({

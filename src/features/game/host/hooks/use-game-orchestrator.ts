@@ -1,18 +1,14 @@
 import { useNavigate } from 'react-router';
 import { createDeck, dealToPlayers } from '@/lib/card-deal';
 import { useGameStore, type PlayersDataMap } from '@/stores/game-store';
-import type { GameEvent } from '@/schemas/events';
 import {
   calculatePlayingOrder,
-  calculateScores,
   getStoryteller,
   syncGameState,
 } from '@/utils/game-logic';
-import { shuffleItems } from '@/utils/shuffle';
 import type { LobbyPlayer } from '@/stores/lobby-store';
 
-
-const useGameOrcestrator = () => {
+const useGameOrchestrator = () => {
   const phase = useGameStore((state) => state.phase);
   const setPlayersData = useGameStore((state) => state.setPlayersData);
   const navigate = useNavigate();
@@ -60,74 +56,6 @@ const useGameOrcestrator = () => {
     }
 
     navigate('/game');
-  };
-
-  const handleGameEvent = (event: GameEvent) => {
-    switch (event.type) {
-      case 'STORYTELLER_CLUE': {
-        const currentPlayersData = useGameStore.getState().playersData;
-
-        setRound({
-          clue: event.clue,
-          storytellerCard: event.card,
-        });
-        setPhase('PLAYERS_SELECT_CARD');
-        for (const [playerId] of currentPlayersData) {
-          syncGameState(playerId);
-        }
-        break;
-      }
-      case 'PLAYER_SELECTS_CARD': {
-        const currentPlayersData = useGameStore.getState().playersData;
-        const storytellerCard = useGameStore.getState().round.storytellerCard;
-        const submittedCards = new Map(
-          useGameStore.getState().round.submittedCards,
-        );
-        submittedCards?.set(event.playerId, event.card);
-        setRound({ submittedCards });
-
-        if (
-          submittedCards?.size === currentPlayersData.size - 1 &&
-          storytellerCard
-        ) {
-          const shuffledCards = shuffleItems([
-            ...submittedCards.values(),
-            storytellerCard,
-          ]);
-          setRound({ tableCards: shuffledCards });
-        }
-        break;
-      }
-      case 'VOTING': {
-        const currentPlayersData = useGameStore.getState().playersData;
-        const votes = new Map(useGameStore.getState().round.votes);
-
-        const { storytellerCard, storytellerId, submittedCards } =
-          useGameStore.getState().round;
-
-        votes.set(event.playerId, event.card);
-
-        setRound({ votes });
-
-        if (
-          votes?.size === currentPlayersData.size - 1 &&
-          storytellerCard &&
-          submittedCards
-        ) {
-          setRound({
-            roundScores: calculateScores({
-              storytellerCard,
-              storytellerId,
-              submittedCards,
-              votes,
-            }),
-          });
-        }
-        break;
-      }
-      default:
-        break;
-    }
   };
 
   const advanceToNextRound = () => {
@@ -242,7 +170,6 @@ const useGameOrcestrator = () => {
   return {
     phase,
     startGame,
-    handleGameEvent,
     advanceToNextRound,
     transitionFromDeal,
     transitionToVoting,
@@ -250,4 +177,4 @@ const useGameOrcestrator = () => {
   };
 };
 
-export default useGameOrcestrator;
+export default useGameOrchestrator;

@@ -1,5 +1,5 @@
 import { useGameStore } from '@/stores/game-store';
-import type { PlayerScore } from '@/types';
+import type { PlayerScore } from '../types';
 import { useMemo } from 'react';
 
 export const usePlayersResults = () => {

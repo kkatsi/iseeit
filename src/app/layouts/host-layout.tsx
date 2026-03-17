@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router';
-import useOpenPeer from '@/hooks/use-open-peer';
+import useOpenPeer from './use-open-peer';
 
 const HostLayout = () => {
   const roomId = useOpenPeer();

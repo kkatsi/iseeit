@@ -5,6 +5,7 @@ import { useLobbyStore } from '@/stores/lobby-store';
 import { useGameStore } from '@/stores/game-store';
 import { getFromLocalStorage } from '@/lib/local-storage';
 import { LOCAL_STORAGE_STATE_KEY } from '@/config/constants';
+import { sendEvent } from '@/lib/peer';
 
 export const useClientConnect = (
   connectToRoom: () => Promise<void>,
@@ -45,7 +46,7 @@ export const useClientConnect = (
   const handleAvatarTap = (avatarId: string) => {
     if (!connection || !playerId) return;
 
-    connection.send({
+    sendEvent(connection, {
       type: 'AVATAR_SELECT',
       playerId,
       avatarId,
@@ -55,7 +56,7 @@ export const useClientConnect = (
   const finalize = (name: string, avatarId: string) => {
     if (!connection || !playerId) return;
 
-    connection.send({
+    sendEvent(connection, {
       type: 'PLAYER_SETUP_COMPLETE',
       playerId,
       name,

@@ -17,15 +17,15 @@ const GeneralCardSelectScreen = ({
   const cards = useGameStore((state) => state.cards).get(playerId);
   const clue = useGameStore((state) => state.round.clue);
 
+  const [selectedCard, setSelectedCard] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+
   const { error, formAction, isPending } = useCardSelectSubmit(
     isStoryteller ? 'STORYTELLER_CLUE' : 'PLAYER_SELECTS_CARD',
     playerId,
     () => setSubmitted(true),
     connection,
   );
-
-  const [selectedCard, setSelectedCard] = useState<string | null>(null);
-  const [submitted, setSubmitted] = useState(false);
 
   if (!cards) return null;
 

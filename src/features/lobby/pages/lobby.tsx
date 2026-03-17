@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useMemo } from 'react';
 import { useOutletContext } from 'react-router';
 import { avatarIds, SLOT_POSITIONS } from '@/config/constants';
-import useGameOrcestrator from '@/hooks/use-game-orchestrator';
+import useGameOrchestrator from '@/features/game/host/hooks/use-game-orchestrator';
 import { useLobbyStore } from '@/stores/lobby-store';
 import type { HostOutletContextType } from '@/types';
 import { EmptyPlayerSlot } from '../components/empty-player-slot';
@@ -20,7 +20,7 @@ const Lobby = () => {
   const { roomId } = useOutletContext<HostOutletContextType>();
 
   const lobbyPlayers = useLobbyStore((state) => state.players);
-  const { startGame } = useGameOrcestrator();
+  const { startGame } = useGameOrchestrator();
 
   const { containerControls, introComplete, gameStartTransition, uiControls } =
     useLobbyAnimations(roomId);

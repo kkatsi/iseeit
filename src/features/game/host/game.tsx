@@ -1,13 +1,14 @@
-import useGameOrcestrator from '@/hooks/use-game-orchestrator';
+import ErrorBoundary from '@/components/error-boundary';
+import useGameOrchestrator from './hooks/use-game-orchestrator';
 import DealPhase from './deal-phase';
 import PlayersSelectCardPhase from './players-select-card-phase';
 import ResultsPhase from './results-phase';
 import StorytellerPhase from './storyteller-phase';
 import VotingPhase from './voting-phase';
 
-const Game = () => {
+const GamePhase = () => {
   const { phase, transitionFromDeal, transitionToVoting, transitionToResults } =
-    useGameOrcestrator();
+    useGameOrchestrator();
 
   switch (phase) {
     case 'CARD_DEAL':
@@ -24,5 +25,11 @@ const Game = () => {
       return null;
   }
 };
+
+const Game = () => (
+  <ErrorBoundary>
+    <GamePhase />
+  </ErrorBoundary>
+);
 
 export default Game;

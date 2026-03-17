@@ -1,4 +1,4 @@
-import useGameOrchestrator from '@/hooks/use-game-orchestrator';
+import useGameOrchestrator from './hooks/use-game-orchestrator';
 import { useGameStore } from '@/stores/game-store';
 import { LayoutGroup, motion } from 'framer-motion';
 import { PlayerResultRow } from './components/player-result-row';

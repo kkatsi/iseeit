@@ -3,6 +3,7 @@ import { LOCAL_STORAGE_STATE_KEY } from '@/config/constants';
 import { useGameStore } from '@/stores/game-store';
 import { getFromLocalStorage } from '@/lib/local-storage';
 import { usePeerStore } from '@/stores/peer-store';
+import ErrorBoundary from '@/components/error-boundary';
 import DealPhase from './deal-phase';
 import StorytellerPhase from './storyteller-phase';
 import PlayersSelectCardPhase from './players-select-card-phase';
@@ -10,7 +11,7 @@ import VotingPhase from './voting-phase';
 import ResultsPhase from './results-phase';
 import { WaitingScreen } from '@/components/waiting-screen';
 
-const Play = () => {
+const PlayPhase = () => {
   const { playerId } = getFromLocalStorage(LOCAL_STORAGE_STATE_KEY) || {};
   const [params] = useSearchParams();
   const connection = usePeerStore((state) =>
@@ -44,5 +45,11 @@ const Play = () => {
       return <WaitingScreen>Waiting for the host to begin...</WaitingScreen>;
   }
 };
+
+const Play = () => (
+  <ErrorBoundary>
+    <PlayPhase />
+  </ErrorBoundary>
+);
 
 export default Play;

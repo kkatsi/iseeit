@@ -15,6 +15,7 @@ import {
 } from '@/schemas/events';
 import { useLobbyStore, type LobbyPlayer } from '@/stores/lobby-store';
 import { withTimeout } from '@/utils/async';
+import { sendEvent } from '@/lib/peer';
 
 const useConnectPeer = (roomId?: string | null) => {
   const addConnection = usePeerStore((state) => state.addConnection);
@@ -110,7 +111,7 @@ const useConnectPeer = (roomId?: string | null) => {
           addConnection(playerId, connection);
 
           connection.on('open', () => {
-            connection.send(initialEvent);
+            sendEvent(connection, initialEvent);
 
             connection.on('data', (data) => {
               const result = gameEventSchema.safeParse(data);

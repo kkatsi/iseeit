@@ -1,6 +1,7 @@
 import type { GameStateSyncEvent } from '@/schemas/events';
 import { useGameStore, type PlayersDataMap } from '@/stores/game-store';
 import { usePeerStore } from '@/stores/peer-store';
+import { sendEvent } from '@/lib/peer';
 import { shuffleItems } from './shuffle';
 
 export const calculatePlayingOrder = (playersData: PlayersDataMap) => {
@@ -73,7 +74,7 @@ export const syncGameState = (playerId: string) => {
 
   if (!connection) throw new Error('no connection');
 
-  connection.send({
+  sendEvent(connection, {
     type: 'GAME_STATE_SYNC',
     phase: phase || 'GAME_END',
     name: player?.name ?? '',

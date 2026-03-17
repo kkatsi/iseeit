@@ -28,4 +28,72 @@ export default defineConfig([
       },
     },
   },
+  // Prevent features from importing the app layer
+  {
+    files: ['src/features/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': ['error', { patterns: ['@/app/**'] }],
+    },
+  },
+  // Prevent shared layers from importing features or app
+  {
+    files: [
+      'src/components/**/*.{ts,tsx}',
+      'src/hooks/**/*.{ts,tsx}',
+      'src/lib/**/*.{ts,tsx}',
+      'src/types/**/*.{ts,tsx}',
+      'src/utils/**/*.{ts,tsx}',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { patterns: ['@/features/**', '@/app/**'] },
+      ],
+    },
+  },
+  // Prevent cross-feature imports
+  {
+    files: ['src/features/game/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            '@/features/lobby/**',
+            '@/features/client-connect/**',
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/features/lobby/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          // Lobby is host-side and may depend on game/host. Restrict only
+          // client-side features it should never touch.
+          patterns: [
+            '@/features/game/client/**',
+            '@/features/client-connect/**',
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/features/client-connect/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            '@/features/game/**',
+            '@/features/lobby/**',
+          ],
+        },
+      ],
+    },
+  },
 ]);
