@@ -62,8 +62,9 @@ export const calculateScores = ({
 
 export const syncGameState = (playerId: string) => {
   const connection = usePeerStore.getState().connections.get(playerId);
-  const { storytellerId, clue, tableCards, roundScores } =
+  const { storytellerId, clue, tableCards, roundScores, submittedCards } =
     useGameStore.getState().round;
+  const ownSubmittedCard = submittedCards?.get(playerId);
   const cards = useGameStore.getState().cards?.get(playerId) || [];
   const phase = useGameStore.getState().phase;
   const player = useGameStore.getState().playersData.get(playerId);
@@ -79,6 +80,7 @@ export const syncGameState = (playerId: string) => {
     storytellerId,
     ...(clue ? { clue } : {}),
     ...(tableCards ? { tableCards } : {}),
+    ...(ownSubmittedCard ? { ownSubmittedCard } : {}),
     roundScore: roundScores?.get(playerId) ?? 0,
     playerId,
   } satisfies GameStateSyncEvent);

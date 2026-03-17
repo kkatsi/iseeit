@@ -26,6 +26,7 @@ type RoundState = {
   storytellerCard?: string;
   submittedCards?: Map<string, string>; // playerId → cardURL
   tableCards?: string[]; // shuffled submitted cards (for voting display)
+  ownSubmittedCard?: string; // the card this player submitted (for excluding from voting)
   votes?: Map<string, string>; // voterId → cardURL voted for
   roundScores?: Map<string, number>; // points earned THIS round
 };

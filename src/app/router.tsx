@@ -1,11 +1,9 @@
-import { createBrowserRouter, RouterProvider } from 'react-router';
-import { paths } from '@/config/paths';
 import AppLayout from '@/app/layouts/app-layout';
-import HostLayout from '@/app/layouts/host-layout';
 import ClientLayout from '@/app/layouts/client-layout';
-import DealPhase from '@/features/game/client/deal-phase';
-import StorytellerPhase from '@/features/game/client/storyteller-phase';
-import PlayersSelectCardPhase from '@/features/game/host/players-select-card-phase';
+import HostLayout from '@/app/layouts/host-layout';
+import { paths } from '@/config/paths';
+import VotingPhase from '@/features/game/client/voting-phase';
+import { createBrowserRouter, RouterProvider } from 'react-router';
 const convert = (m: { default: React.ComponentType }) => ({
   Component: m.default,
 });
@@ -47,12 +45,7 @@ const createRouter = () =>
         },
         {
           path: '/test',
-          Component: () =>
-            PlayersSelectCardPhase({
-              onComplete: () => {
-                console.log('completed');
-              },
-            }),
+          Component: VotingPhase,
         },
       ],
     },

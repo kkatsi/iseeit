@@ -1,12 +1,13 @@
 import { useGameStore } from '@/stores/game-store';
-import StorytellerScreen from './components/storyteller-screen';
+import CardSelectScreen from './components/card-select-screen';
 import { WaitingScreen } from '../../../components/waiting-screen';
 
 const StorytellerPhase = () => {
   const playerId = useGameStore((state) => state.connectedPlayerId);
   const storytellerId = useGameStore((state) => state.round.storytellerId);
 
-  if (playerId === storytellerId) return <StorytellerScreen />;
+  if (playerId === storytellerId)
+    return <CardSelectScreen isStoryteller={true} />;
 
   return <WaitingScreen>Waiting for storyteller's clue...</WaitingScreen>;
 };

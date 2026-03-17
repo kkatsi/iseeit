@@ -57,6 +57,7 @@ const useConnectPeer = (roomId?: string | null) => {
           storytellerId: event.storytellerId,
           clue: event.clue,
           tableCards: event.tableCards,
+          ownSubmittedCard: event.ownSubmittedCard,
           roundScores,
         });
         setCards(cardsMap);
