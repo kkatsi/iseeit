@@ -1,4 +1,6 @@
 export const BASE_URL = import.meta.env.VITE_BASE_URL;
+export const PEERJS_HANDSHAKE_SERVER_URL = import.meta.env
+  .VITE_PEERJS_HANDSHAKE_SERVER_URL;
 export const cardIds = [
   'card-1',
   'card-2',

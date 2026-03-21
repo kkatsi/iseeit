@@ -12,6 +12,7 @@ import {
 import { syncGameState } from '@/utils/game-logic';
 import { sendEvent } from '@/lib/peer';
 import { handleGameEvent } from '@/features/game/host/game-event-handler';
+import { PEERJS_HANDSHAKE_SERVER_URL } from '@/config/constants';
 
 const syncLobbyState = () => {
   const connections = usePeerStore.getState().connections;
@@ -109,7 +110,12 @@ const useOpenPeer = () => {
   );
 
   useEffect(() => {
-    const peer = new Peer();
+    const peer = new Peer({
+      host: PEERJS_HANDSHAKE_SERVER_URL,
+      secure: true,
+      port: 443,
+      path: '/',
+    });
 
     peer.on('open', (id) => {
       setRoomId(id);

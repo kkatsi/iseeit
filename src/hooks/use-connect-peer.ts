@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   CONNECTION_TIMEOUT,
   LOCAL_STORAGE_STATE_KEY,
+  PEERJS_HANDSHAKE_SERVER_URL,
 } from '@/config/constants';
 import { useGameStore } from '@/stores/game-store';
 import { getFromLocalStorage, saveToLocalStorage } from '@/lib/local-storage';
@@ -117,7 +118,12 @@ const useConnectPeer = (roomId?: string | null) => {
   ) => {
     if (!roomId) return;
 
-    const peer = new Peer();
+    const peer = new Peer({
+      host: PEERJS_HANDSHAKE_SERVER_URL,
+      secure: true,
+      port: 443,
+      path: '/',
+    });
     peerRef.current = peer;
 
     await withTimeout(
