@@ -66,7 +66,7 @@ export const CONNECTION_TIMEOUT = 15000;
 export const CLIENT_CARD_DURATION = 2; // seconds per card on client (entrance + showcase + fan)
 export const CARD_DEAL_DURATION = 3; // seconds per flying card animation on host
 export const DECK_INTRO_DELAY = 1; // seconds before first card flies
-export const DEAL_PHASE_BUFFER_MS = 2000; // extra buffer for visual comfort/latency
+export const DEAL_PHASE_BUFFER_MS = 800; // extra buffer for visual comfort/latency
 // Shuffle animation timing (host: players-select-card → voting transition)
 export const ALL_SUBMITTED_PAUSE_MS = 1500; // pause to show "all players chose" before collecting
 export const COLLECT_STAGGER_MS = 300; // delay between each card collecting to center
