@@ -28,6 +28,7 @@ const gameStateSyncSchema = z.object({
   tableCards: z.array(z.string()).optional(),
   ownSubmittedCard: z.string().optional(),
   roundScore: z.number(),
+  totalScore: z.number(),
   newCards: z.array(z.string()).optional(),
   phase: z.enum([
     'CARD_DEAL',

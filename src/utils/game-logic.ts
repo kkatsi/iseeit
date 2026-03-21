@@ -86,6 +86,7 @@ export const syncGameState = (playerId: string) => {
     ...(ownSubmittedCard ? { ownSubmittedCard } : {}),
     ...(newCards.length > 0 ? { newCards } : {}),
     roundScore: roundScores?.get(playerId) ?? 0,
+    totalScore: player?.score ?? 0,
     playerId,
   } satisfies GameStateSyncEvent);
 };

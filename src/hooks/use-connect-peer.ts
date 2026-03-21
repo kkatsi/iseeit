@@ -29,6 +29,7 @@ const useConnectPeer = (roomId?: string | null) => {
     (state) => state.setConnectedPlayerId,
   );
   const setNewCards = useGameStore((state) => state.setNewCards);
+  const setPlayersData = useGameStore((state) => state.setPlayersData);
   const setPlayers = useLobbyStore((state) => state.setPlayers);
 
   const peerRef = useRef<Peer>(undefined);
@@ -65,6 +66,21 @@ const useConnectPeer = (roomId?: string | null) => {
         setCards(cardsMap);
         setNewCards(event.newCards ?? event.cards);
         setConnectedPlayerId(event.playerId);
+
+        // Populate game store so results phase can display player data
+        setPlayersData(
+          new Map([
+            [
+              event.playerId,
+              {
+                name: event.name,
+                avatarId: event.avatarId,
+                score: event.totalScore,
+                isConnected: true,
+              },
+            ],
+          ]),
+        );
 
         // Populate lobby store so WaitingScreen can display player identity
         setPlayers(

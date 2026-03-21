@@ -2,7 +2,7 @@ import { getCardFanTransform } from '@/lib/card-deal';
 import { useGameStore } from '@/stores/game-store';
 import { usePeerStore } from '@/stores/peer-store';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import useCardSelectSubmit from '../hooks/use-card-select-submit';
 import { WaitingScreen } from '@/components/waiting-screen';
 import { ClueBanner } from './clue-banner';
@@ -19,6 +19,7 @@ const GeneralCardSelectScreen = ({
 
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const controlsRef = useRef<HTMLDivElement>(null);
 
   const { error, formAction, isPending } = useCardSelectSubmit(
     isStoryteller ? 'STORYTELLER_CLUE' : 'PLAYER_SELECTS_CARD',
@@ -31,11 +32,19 @@ const GeneralCardSelectScreen = ({
 
   const totalCards = cards.length;
 
-  // Fan lives at the bottom; showcase is the upper area.
-  // Cards are always rendered in one place (the fan container) and animated
-  // to the showcase position when selected
   const FAN_BOTTOM = -20;
-  const SHOWCASE_Y = Math.max(-(0.75 * window.innerHeight - 72), -560);
+  const CARD_HEIGHT = 160; // h-40
+  const SCALE = 2;
+  const GAP = 16;
+
+  // Position the scaled card's bottom edge just above the controls
+  const getShowcaseY = () => {
+    if (!controlsRef.current) return -300;
+    const controlsTop = controlsRef.current.getBoundingClientRect().top;
+    const cardNaturalCenterY = window.innerHeight - CARD_HEIGHT / 2;
+    const targetCenterY = controlsTop - GAP - (CARD_HEIGHT * SCALE) / 2;
+    return targetCenterY - cardNaturalCenterY;
+  };
 
   if (submitted && !isStoryteller)
     return (
@@ -53,7 +62,7 @@ const GeneralCardSelectScreen = ({
 
       {/* Clue UI + submit — anchored above the fan */}
       <div className="flex-1 flex flex-col items-center justify-end px-6 pb-12">
-        <div className="w-full max-w-xs flex flex-col gap-3">
+        <div ref={controlsRef} className="w-full max-w-xs flex flex-col gap-3">
           {isStoryteller && (
             <input
               type="text"
@@ -112,7 +121,7 @@ const GeneralCardSelectScreen = ({
               }}
               animate={
                 isSelected
-                  ? { x: 0, y: SHOWCASE_Y, rotate: 0, scale: 2 }
+                  ? { x: 0, y: getShowcaseY(), rotate: 0, scale: SCALE }
                   : { x: fan.x, y: FAN_BOTTOM, rotate: fan.rotate, scale: 1 }
               }
               transition={{ type: 'spring', stiffness: 200, damping: 22 }}
