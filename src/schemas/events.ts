@@ -13,7 +13,7 @@ const joinedEventSchema = z.object({
 
 const playerSelectsCardEventSchema = z.object({
   type: z.literal('PLAYER_SELECTS_CARD'),
-  card: z.url(),
+  card: z.string(),
   playerId: z.uuidv4(),
 });
 
@@ -22,13 +22,13 @@ const gameStateSyncSchema = z.object({
   type: z.literal('GAME_STATE_SYNC'),
   name: z.string().min(1).max(16),
   avatarId: z.string().startsWith('avatar-'),
-  cards: z.array(z.url()),
+  cards: z.array(z.string()),
   storytellerId: z.uuidv4(),
   clue: z.string().max(200).optional(),
-  tableCards: z.array(z.url()).optional(),
-  ownSubmittedCard: z.url().optional(),
+  tableCards: z.array(z.string()).optional(),
+  ownSubmittedCard: z.string().optional(),
   roundScore: z.number(),
-  newCards: z.array(z.url()).optional(),
+  newCards: z.array(z.string()).optional(),
   phase: z.enum([
     'CARD_DEAL',
     'STORYTELLER_CLUE',
@@ -42,12 +42,12 @@ const gameStateSyncSchema = z.object({
 const storyTellerClueEventSchema = z.object({
   type: z.literal('STORYTELLER_CLUE'),
   clue: z.string().min(1).max(200),
-  card: z.url(),
+  card: z.string(),
 });
 
 const votingEventSchema = z.object({
   type: z.literal('VOTING'),
-  card: z.url(),
+  card: z.string(),
   playerId: z.uuidv4(),
 });
 

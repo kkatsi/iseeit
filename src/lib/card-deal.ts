@@ -26,12 +26,13 @@ export const calculateDealDuration = (
   return lastCardDealDelay + CARD_DEAL_DURATION;
 };
 
-const toCardUrl = (cardId: string) => `/cards/${cardId}.png`;
+const toCardRelativePath = (cardId: string) => `/cards/${cardId}.png`;
 
 /**
  * Creates a shuffled draw pile from all card IDs (as URLs).
  */
-export const createDeck = (): string[] => shuffleItems(cardIds.map(toCardUrl));
+export const createDeck = (): string[] =>
+  shuffleItems(cardIds.map(toCardRelativePath));
 
 /**
  * Draws `count` cards from the draw pile.
