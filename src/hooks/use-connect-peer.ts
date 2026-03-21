@@ -162,9 +162,11 @@ const useConnectPeer = (roomId?: string | null) => {
       getFromLocalStorage(LOCAL_STORAGE_STATE_KEY)?.playerId ||
       crypto.randomUUID();
 
+    const stored = getFromLocalStorage(LOCAL_STORAGE_STATE_KEY);
+
     saveToLocalStorage({
       name: LOCAL_STORAGE_STATE_KEY,
-      value: { playerId, roomId },
+      value: { playerId, roomId, name: stored?.name, avatarId: stored?.avatarId },
     });
 
     setLocalPlayerId(playerId);
@@ -173,6 +175,8 @@ const useConnectPeer = (roomId?: string | null) => {
       await connectToPeer(playerId, {
         type: 'CONNECTED',
         playerId,
+        ...(stored?.avatarId && { avatarId: stored.avatarId }),
+        ...(stored?.name && { name: stored.name }),
       } satisfies ConnectedEvent);
     } catch (err) {
       setConnectionError(

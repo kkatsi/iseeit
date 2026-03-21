@@ -41,7 +41,7 @@ const Lobby = () => {
     startGame(readyMap);
   };
 
-  const hasEnoughPlayers = roomId ? readyPlayers.length >= 2 : false;
+  const hasEnoughPlayers = roomId ? readyPlayers.length > 2 : false;
 
   return (
     <motion.div

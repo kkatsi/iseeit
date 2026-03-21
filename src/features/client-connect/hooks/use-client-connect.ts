@@ -3,7 +3,7 @@ import { createSearchParams, useNavigate, useSearchParams } from 'react-router';
 import type { DataConnection } from 'peerjs';
 import { useLobbyStore } from '@/stores/lobby-store';
 import { useGameStore } from '@/stores/game-store';
-import { getFromLocalStorage } from '@/lib/local-storage';
+import { getFromLocalStorage, saveToLocalStorage } from '@/lib/local-storage';
 import { LOCAL_STORAGE_STATE_KEY } from '@/config/constants';
 import { sendEvent } from '@/lib/peer';
 
@@ -24,11 +24,15 @@ export const useClientConnect = (
   const lobbyPlayers = useLobbyStore((state) => state.players);
   const gamePhase = useGameStore((state) => state.phase);
 
+  const storedSession = useMemo(
+    () => getFromLocalStorage(LOCAL_STORAGE_STATE_KEY),
+    [roomId],
+  );
+
   // True if localStorage suggests a previous session for this room
-  const hasExistingSession = useMemo(() => {
-    const stored = getFromLocalStorage(LOCAL_STORAGE_STATE_KEY);
-    return !!(stored?.playerId && stored?.roomId === roomId);
-  }, [roomId]);
+  const hasExistingSession = !!(
+    storedSession?.playerId && storedSession?.roomId === roomId
+  );
 
   // Keep showing the waiting screen until host responds with sync data
   const isWaitingForSync =
@@ -54,7 +58,13 @@ export const useClientConnect = (
   };
 
   const finalize = (name: string, avatarId: string) => {
-    if (!connection || !playerId) return;
+    if (!connection || !playerId || !roomId) return;
+
+    // Persist choices so they survive a page refresh
+    saveToLocalStorage({
+      name: LOCAL_STORAGE_STATE_KEY,
+      value: { playerId, roomId, name, avatarId },
+    });
 
     sendEvent(connection, {
       type: 'PLAYER_SETUP_COMPLETE',
@@ -98,6 +108,7 @@ export const useClientConnect = (
     handleAvatarTap,
     unavailableAvatarIds,
     selectedAvatarId,
+    storedName: storedSession?.name,
     isLoading: !!isLoading,
     submitAction,
     isWaitingForSync,

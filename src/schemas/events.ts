@@ -60,6 +60,8 @@ const reconnectEventSchema = z.object({
 const connectedEventSchema = z.object({
   type: z.literal('CONNECTED'),
   playerId: z.uuidv4(),
+  avatarId: z.string().startsWith('avatar-').optional(),
+  name: z.string().min(1).max(16).optional(),
 });
 
 const avatarSelectEventSchema = z.object({

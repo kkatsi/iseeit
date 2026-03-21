@@ -8,6 +8,8 @@ interface SaveProps {
 const localStorageStateSchema = z.object({
   playerId: z.uuidv4(),
   roomId: z.string(),
+  name: z.string().min(1).max(16).optional(),
+  avatarId: z.string().startsWith('avatar-').optional(),
 });
 
 export type LocalStorageState = z.infer<typeof localStorageStateSchema>;

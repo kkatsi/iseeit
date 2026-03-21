@@ -16,6 +16,7 @@ const Connect = () => {
     handleAvatarTap,
     unavailableAvatarIds,
     selectedAvatarId,
+    storedName,
     isLoading,
     submitAction,
     isWaitingForSync,
@@ -41,6 +42,7 @@ const Connect = () => {
         <input
           type="text"
           name="name"
+          defaultValue={storedName}
           placeholder="What shall we call you?"
           maxLength={16}
           required

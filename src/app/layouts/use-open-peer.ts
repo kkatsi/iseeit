@@ -69,6 +69,12 @@ const useOpenPeer = () => {
           }
 
           addPendingPlayer(event.playerId, connection.connectionId);
+
+          // Restore previous avatar if client is rejoining lobby
+          if (event.avatarId) {
+            setPlayersAvatar(event.playerId, event.avatarId);
+          }
+
           syncLobbyState();
           break;
         }
