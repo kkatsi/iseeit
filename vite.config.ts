@@ -13,11 +13,13 @@ export default defineConfig({
   },
   server: {
     host: true,
+    open: true,
+    port: 5173,
   },
   css: {
     lightningcss: {
       targets: {
-        chrome: (61 << 16),
+        chrome: 61 << 16,
       },
     },
   },
