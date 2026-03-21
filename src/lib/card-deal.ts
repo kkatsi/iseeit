@@ -26,9 +26,7 @@ export const calculateDealDuration = (
   return lastCardDealDelay + CARD_DEAL_DURATION;
 };
 
-const CARD_BASE_URL = import.meta.env.VITE_CARD_BASE_URL;
-
-const toCardUrl = (cardId: string) => `${CARD_BASE_URL}/cards/${cardId}.png`;
+const toCardUrl = (cardId: string) => `/cards/${cardId}.png`;
 
 /**
  * Creates a shuffled draw pile from all card IDs (as URLs).

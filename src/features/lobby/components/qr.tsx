@@ -1,7 +1,8 @@
+import { BASE_URL } from '@/config/constants';
 import QRCode from 'react-qr-code';
 
 export const QR = ({ roomId }: { roomId: string }) => {
-  const url = `${window.location.origin}/client/connect?roomId=${roomId}`;
+  const url = `${BASE_URL}/client/connect?roomId=${roomId}`;
 
   return (
     <div
@@ -25,9 +26,9 @@ export const QR = ({ roomId }: { roomId: string }) => {
         fgColor="#3d5a47"
         bgColor="transparent"
       />
-    <p className="mt-2 font-handwritten text-lg text-foreground">
-      Scan to Join
-    </p>
+      <p className="mt-2 font-handwritten text-lg text-foreground">
+        Scan to Join
+      </p>
     </div>
   );
 };
